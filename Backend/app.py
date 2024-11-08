@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
-from werkzeug.security import generate_password_hash
-import pymysql
+# from werkzeug.security import generate_password_hash
+# import pymysql
 from flask_cors import CORS
 from datetime import datetime
 
@@ -9,7 +9,7 @@ from datetime import datetime
 app = Flask(__name__)
 CORS(app)
 # Configure MySQL database connection
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:Shourya22@localhost:3306/mydatabase'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://helpernest_user:AZt1yiyILymT3QWR6E7ULQ8IXsGWAu7U@dpg-csmvvmij1k6c73dpeh9g-a.oregon-postgres.render.com/helpernest'
 
 #app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:Shourya22%40%40localhost/mydatabase'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
