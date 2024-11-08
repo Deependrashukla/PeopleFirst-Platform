@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom'; // Import Link for navigation
+import { useNavigate, Link } from 'react-router-dom';
+
 import "./Customer.css";
 
-const LoginForm = () => {
+const Register = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null); // State to store error messages
@@ -13,7 +14,7 @@ const LoginForm = () => {
     const customerData = { email, password };
 
     try {
-      const response = await fetch('http://127.0.0.1:5000/login', {
+      const response = await fetch('http://127.0.0.1:5000/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -37,7 +38,7 @@ const LoginForm = () => {
 
   return (
     <div className="login-form">
-      <h2>Customer Login</h2>
+      <h2>Register</h2>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label>Email:</label>
@@ -58,15 +59,13 @@ const LoginForm = () => {
           />
         </div>
         {error && <p className="error-message">{error}</p>} {/* Display error if any */}
-        <button type="submit">Login</button>
-
-        {/* Register link in blue color */}
+        <button type="submit">Register</button>
         <p className="register-link">
-          Don't have an account? <Link to="/register" style={{ color: 'blue' }}>Register</Link>
+          Already have an account? <Link to="/select-role/customer" style={{ color: 'blue' }}>Register</Link>
         </p>
       </form>
     </div>
   );
 };
 
-export default LoginForm;
+export default Register;

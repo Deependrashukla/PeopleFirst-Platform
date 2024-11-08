@@ -12,9 +12,9 @@ const RoleSelectionPage = () => {
   const handleRoleSelection = (role) => {
     // Navigate to the respective login page based on the role
     if (role === 'customer') {
-      navigate('/select-role/customer');
+      navigate('/services');
     } else if (role === 'worker') {
-      navigate('/select-role/worker');
+      navigate('/select-role/worker/register');
     }
   };
 

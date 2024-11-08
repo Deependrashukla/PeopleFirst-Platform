@@ -1,83 +1,124 @@
-/* Center the form and add padding around the container */
+/* Container styling */
 .container {
-    margin: 0 auto;
-    max-width: 500px;
-    padding: 20px;
-    text-align: center;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    background-color: #f9f9f9;
-  }
-  
-  /* Style the form labels and inputs */
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 30px;
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: left;
+}
+
+.container h2 {
+  text-align: center;
+  color: #333;
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+/* Form section styling */
 .container form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Label styling */
+.container label {
+  font-weight: bold;
+  color: #555;
+  margin-bottom: 5px;
+}
+
+/* Input styling */
+.container input[type="text"],
+.container input[type="email"],
+.container input[type="tel"],
+.container input[type="date"],
+.container input[type="number"],
+.container input[type="file"] {
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 15px;
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease;
+}
+
+.container input[type="text"]:focus,
+.container input[type="email"]:focus,
+.container input[type="tel"]:focus,
+.container input[type="date"]:focus,
+.container input[type="number"]:focus,
+.container input[type="file"]:focus {
+  border-color: #4CAF50;
+  outline: none;
+}
+
+/* Error message styling */
+.container p {
+  color: #d9534f;
+  font-size: 14px;
+  margin-top: -10px;
+  margin-bottom: 10px;
+}
+
+/* Step navigation button styling */
+.container button[type="button"] {
+  padding: 10px 20px;
+  background-color: #4CAF50;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 10px;
+}
+
+.container button[type="button"]:hover {
+  background-color: #45a049;
+}
+
+/* Submit button styling */
+.container button[type="submit"] {
+  padding: 12px;
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.container button[type="submit"]:hover {
+  background-color: #0069d9;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 600px) {
+  .container {
+    padding: 20px;
   }
-  
-  .container label {
-    font-weight: bold;
-    margin-bottom: 5px;
+
+  .container h2 {
+    font-size: 20px;
   }
-  
+
   .container input[type="text"],
   .container input[type="email"],
-  .container [type="tel"],
+  .container input[type="tel"],
   .container input[type="date"],
   .container input[type="number"],
   .container input[type="file"] {
-    padding: 10px;
-    font-size: 16px;
-    width: 100%;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-  }
-  
-  /* Style the button */
-  .container button {
-    padding: 10px 15px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-  
-  /* Button hover effect */
-  .container button:hover {
-    background-color: #45a049;
-  }
-  
-  /* Error message styling */
-  .container  p {
-    color: red;
     font-size: 14px;
-    margin-top: -10px;
-    margin-bottom: 10px;
   }
- 
-  /* Responsive adjustments for smaller screens */
-  /* @media screen and (max-width: 600px) {
-    .container {
-      width: 90%;
-    }
-   */ 
-    /* input[type="text"],
-    input[type="email"],
-    input[type="tel"],
-    input[type="date"],
-    input[type="number"],
-    input[type="file"] {
-      font-size: 14px;
-      padding: 8px;
-    }
-  
-    button {
-      font-size: 14px;
-    } */
-  
-  
+
+  .container button[type="button"],
+  .container button[type="submit"] {
+    font-size: 15px;
+  }
+}

@@ -20,7 +20,7 @@ const FirstPage = () => {
   }, [images.length]);
 
   const handleGetStartedClick = () => {
-    navigate('/select-role'); // Navigate to the role selection page
+    navigate('/select-role/customer'); // Navigate to the role selection page
   };
 
   return (

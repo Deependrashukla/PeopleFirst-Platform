@@ -10,6 +10,7 @@ import Contact from './Components/Pages/Contact';
 import Services from './Components/Pages/Services';
 import Worker from './Components/RoleSelection/Worker';
 import Customer from './Components/RoleSelection/Customer';
+import Register from './Components/RoleSelection/Register';
 // import GetWorker from './Components/GetWorker';
 import RegisterWorker from './Components/RoleSelection/WorkerRegister'
 
@@ -27,6 +28,7 @@ function App() {
         <Route path="/services" element={<Services />} />
         <Route path="/select-role/worker" element={<Worker />} />
         <Route path="/select-role/customer" element={<Customer />} />
+        <Route path="/register" element={<Register />} />
         <Route path="/select-role/worker/register" element={<RegisterWorker />} />
         {/* <Route path="/getworker" element={<GetWorker />} /> */}
       </Routes>

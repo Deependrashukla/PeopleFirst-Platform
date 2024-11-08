@@ -43,9 +43,9 @@ class Worker(db.Model):
     def __repr__(self):
         return f'<Worker {self.first_name} {self.last_name}>'
     
-@app.route('/', methods=['GET'])
-def log():
-    return {'name': 'sonal'}
+# @app.route('/', methods=['GET'])
+# def log():
+#     return {'result'}
 
 # Route to handle login
 @app.route('/login', methods=['POST'])
@@ -61,19 +61,37 @@ def login():
 
     # Check if the worker exists in the database
     worker = Worker_login.query.filter_by(email=email).first()
-
+    
+    print("worker", worker)
     if worker:
         if worker.password == password:
             return jsonify({'message': 'Login successful'}), 200
         else:
             return jsonify({'message': 'Invalid email or password'}), 401
     else:
-        # If the worker does not exist, create a new one
-        new_worker = Worker_login(email=email, password=password)  # Hash the password in a real scenario
-        db.session.add(new_worker)  # Add the new worker to the session
-        db.session.commit()  # Commit the session to save changes
-        return jsonify({'message': 'Worker registered and login successful'}), 201
+        return jsonify({'message': 'Worker does not exist. Please register.'}), 404
+
     
+@app.route('/register', methods=['POST'])
+def register():
+    data = request.get_json()
+    email = data.get('email')
+    password = data.get('password')
+
+    if not email or not password:
+        return jsonify({'message': 'Email and password are required'}), 400
+
+    # Check if the worker already exists
+    existing_worker = Worker_login.query.filter_by(email=email).first()
+    if existing_worker:
+        return jsonify({'message': 'Worker already registered'}), 409
+
+    # Create a new worker
+    new_worker = Worker_login(email=email, password=password)  # Hash the password in a real scenario
+    db.session.add(new_worker)
+    db.session.commit()
+    return jsonify({'message': 'Worker registered successfully'}), 201
+
 @app.route('/register-worker', methods=['POST'])
 def register_worker():
     data = request.json
