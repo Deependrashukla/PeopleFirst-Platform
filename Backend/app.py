@@ -75,17 +75,33 @@ class ListWorker(db.Model):
 # Adding a sample route for creating a ListWorker entry
 @app.route('/add-listworker', methods=['POST'])
 def add_listworker():
-    data = request.json
+    data = request.get_json()  # Use get_json() to parse JSON body
+
+    # Check if start_time and end_time are in the request data and are not None
+    start_time_str = data.get('startTime')
+    end_time_str = data.get('endTime')
+
+    if not start_time_str or not end_time_str:
+        return jsonify({'message': 'Start time and end time are required'}), 400
+
+    try:
+        start_time = datetime.strptime(start_time_str, '%Y-%m-%dT%H:%M')
+        end_time = datetime.strptime(end_time_str, '%Y-%m-%dT%H:%M')
+    except ValueError:
+        return jsonify({'message': 'Invalid date format. Use "YYYY-MM-DDTHH:mm"'}), 400
+
+    # Now create the new listworker object
     new_listworker = ListWorker(
         title=data.get('title'),
         category=data.get('category'),
-        work_description=data.get('work_description'),
-        price=data.get('price'),
-        city=data.get('city'),
-        imageurl=data.get('imageurl'),
-        start_time=datetime.strptime(data.get('start_time'), '%Y-%m-%d %H:%M:%S'),
-        end_time=datetime.strptime(data.get('end_time'), '%Y-%m-%d %H:%M:%S')
+        work_description=data.get('description'),
+        price=data.get('priceRange'),
+        city=data.get('place'),
+        imageurl=data.get('imageurl'),  # If needed, else remove this line
+        start_time=start_time,
+        end_time=end_time
     )
+
     db.session.add(new_listworker)
     db.session.commit()
 
@@ -97,25 +113,34 @@ def get_listworkers():
     city = request.args.get('city')
     category = request.args.get('category')
 
+    # Log the incoming query parameters for debugging
+    print(f"Received city: {city}, category: {category}")
+
     # Validate input
     if not city or not category:
         return jsonify({'message': 'City and category are required parameters'}), 400
 
-    # Query the ListWorker table with the given city and category
-    listworkers = ListWorker.query.filter_by(city=city, category=category).all()
+    try:
+        # Query the ListWorker table with the given city and category
+        listworkers = ListWorker.query.filter_by(city=city, category=category).all()
 
-    # Return results as JSON
-    return jsonify([{
-        'id': listworker.id,
-        'title': listworker.title,
-        'category': listworker.category,
-        'work_description': listworker.work_description,
-        'price': listworker.price,
-        'city': listworker.city,
-        'imageurl': listworker.imageurl,
-        'start_time': listworker.start_time.strftime('%Y-%m-%d %H:%M:%S'),
-        'end_time': listworker.end_time.strftime('%Y-%m-%d %H:%M:%S')
-    } for listworker in listworkers]), 200
+        # Return results as JSON
+        return jsonify([{
+            'id': listworker.id,
+            'title': listworker.title,
+            'category': listworker.category,
+            'work_description': listworker.work_description,
+            'price': listworker.price,
+            'city': listworker.city,
+            'imageurl': listworker.imageurl,
+            'start_time': listworker.start_time.strftime('%Y-%m-%d %H:%M:%S'),
+            'end_time': listworker.end_time.strftime('%Y-%m-%d %H:%M:%S')
+        } for listworker in listworkers]), 200
+
+    except Exception as e:
+        # Log and return a general error message if any issue occurs during the query
+        print(f"Error: {str(e)}")
+        return jsonify({'message': 'An error occurred while processing the request'}), 500
 
 
 ################################################################################################
