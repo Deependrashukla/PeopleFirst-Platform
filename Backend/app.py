@@ -5,7 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from datetime import datetime
 
-# Initialize the Flask app
+# Initialize the Flask app 
 app = Flask(__name__)
 CORS(app)
 # Configure MySQL database connection
@@ -42,6 +42,85 @@ class Worker(db.Model):
 
     def __repr__(self):
         return f'<Worker {self.first_name} {self.last_name}>'
+    
+    
+
+########################################### List Worker Table #########################################
+
+class ListWorker(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100), nullable=False)
+    category = db.Column(
+        db.String(100),
+        nullable=False,
+        default="maid",
+    )
+    work_description = db.Column(db.String(255), nullable=False)
+    price = db.Column(db.String(50), nullable=False)  # Assuming varchar equivalent
+    city = db.Column(db.String(100), nullable=False)
+    imageurl = db.Column(db.String(255), nullable=True)
+    start_time = db.Column(db.DateTime, nullable=False)
+    end_time = db.Column(db.DateTime, nullable=False)
+
+    __table_args__ = (
+        db.CheckConstraint(
+            "category IN ('cook', 'plumber', 'maid', 'electrician', 'baby sitting')",
+            name="valid_category"
+        ),
+    )
+
+    def __repr__(self):
+        return f'<ListWorker {self.title}>'
+
+# Adding a sample route for creating a ListWorker entry
+@app.route('/add-listworker', methods=['POST'])
+def add_listworker():
+    data = request.json
+    new_listworker = ListWorker(
+        title=data.get('title'),
+        category=data.get('category'),
+        work_description=data.get('work_description'),
+        price=data.get('price'),
+        city=data.get('city'),
+        imageurl=data.get('imageurl'),
+        start_time=datetime.strptime(data.get('start_time'), '%Y-%m-%d %H:%M:%S'),
+        end_time=datetime.strptime(data.get('end_time'), '%Y-%m-%d %H:%M:%S')
+    )
+    db.session.add(new_listworker)
+    db.session.commit()
+
+    return jsonify({'message': 'ListWorker added successfully'}), 201
+
+
+@app.route('/listworkers', methods=['GET'])
+def get_listworkers():
+    city = request.args.get('city')
+    category = request.args.get('category')
+
+    # Validate input
+    if not city or not category:
+        return jsonify({'message': 'City and category are required parameters'}), 400
+
+    # Query the ListWorker table with the given city and category
+    listworkers = ListWorker.query.filter_by(city=city, category=category).all()
+
+    # Return results as JSON
+    return jsonify([{
+        'id': listworker.id,
+        'title': listworker.title,
+        'category': listworker.category,
+        'work_description': listworker.work_description,
+        'price': listworker.price,
+        'city': listworker.city,
+        'imageurl': listworker.imageurl,
+        'start_time': listworker.start_time.strftime('%Y-%m-%d %H:%M:%S'),
+        'end_time': listworker.end_time.strftime('%Y-%m-%d %H:%M:%S')
+    } for listworker in listworkers]), 200
+
+
+################################################################################################
+
+
     
 # @app.route('/', methods=['GET'])
 # def log():
