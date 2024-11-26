@@ -1,32 +1,74 @@
+/* EventList.css */
 .event-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    padding: 20px;
-  }
-  
-  .event-card {
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    width: 300px;
-    padding: 15px;
-    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
-  }
-  
-  .event-image {
-    width: 100%;
-    height: 150px;
-    object-fit: cover;
-    border-radius: 8px;
-  }
-  
-  .event-card h2 {
-    margin: 10px 0;
-    font-size: 20px;
-  }
-  
-  .event-card p {
-    margin: 5px 0;
-    font-size: 14px;
-  }
-  
+  font-family: Arial, sans-serif;
+  padding: 20px;
+}
+
+.filters {
+  margin-bottom: 20px;
+}
+
+.filters input {
+  padding: 10px;
+  margin-right: 10px;
+  width: 200px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.filters button {
+  padding: 10px 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.filters button:hover {
+  background-color: #45a049;
+}
+
+/* Card container */
+.card-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+/* Individual card */
+.event-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease-in-out;
+}
+
+.event-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.event-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+h2 {
+  margin-top: 15px;
+  font-size: 24px;
+  color: #333;
+}
+
+p {
+  font-size: 16px;
+  color: #555;
+}
+
+strong {
+  color: #333;
+}

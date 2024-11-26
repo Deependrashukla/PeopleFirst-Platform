@@ -2,6 +2,8 @@ from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 # from werkzeug.security import generate_password_hash
 # import pymysql
+import pusher
+
 from flask_cors import CORS
 from datetime import datetime
 
@@ -13,6 +15,15 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://helpernest_user:AZt1yiyILy
 
 #app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:Shourya22%40%40localhost/mydatabase'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+
+pusher_client = pusher.Pusher(
+    app_id='1902004',
+    key='be108580dd11495c66aa',
+    secret='be987806344c4329b0bc',
+    cluster='ap2',
+    ssl=True
+)
 
 # Initialize SQLAlchemy
 db = SQLAlchemy(app)
@@ -136,7 +147,8 @@ def get_listworkers():
             'city': listworker.city,
             'imageurl': listworker.imageurl,
             'start_time': listworker.start_time.strftime('%Y-%m-%d %H:%M:%S'),
-            'end_time': listworker.end_time.strftime('%Y-%m-%d %H:%M:%S')
+            'end_time': listworker.end_time.strftime('%Y-%m-%d %H:%M:%S'),
+            'aadhaar_number' : listworker.aadhaar_number
         } for listworker in listworkers]), 200
 
     except Exception as e:
@@ -197,6 +209,7 @@ def register():
     db.session.add(new_worker)
     db.session.commit()
     return jsonify({'message': 'Worker registered successfully'}), 201
+
 @app.route('/register-worker', methods=['POST'])
 def register_worker():
     data = request.json
@@ -256,6 +269,40 @@ def get_workers():
         'worker_photo': worker.worker_photo
     } for worker in workers]), 200
 
+@app.route('/book-appointment', methods=['POST'])
+def book_appointment():
+    try:
+        data = request.get_json()
+
+        # Debugging: print the received data to check if workerId exists
+        print("Received data:", data)
+
+        event_id = data['eventId']
+        aadhaar_number = data['aadhaar_number']  # Make sure workerId is in the payload
+        user_id = data['userId']
+
+        if not aadhaar_number:
+            raise ValueError("Worker ID is missing from request")
+
+        # Generate a unique channel for the specific worker
+        worker_channel = f'worker-{aadhaar_number}-channel'
+
+        # Send Pusher event to notify the specific worker
+        pusher_client.trigger(
+            worker_channel,  # Dynamic channel based on worker ID
+            'new-appointment',  # Event name
+            {
+                'eventId': event_id, 
+                'userId': user_id, 
+                'message': 'New appointment request!'
+            }
+        )
+
+        return jsonify({'success': True, 'message': 'Appointment request sent.'})
+
+    except Exception as e:
+        print(f"Error: {e}")
+        return jsonify({'success': False, 'message': str(e)}), 500
 
 if __name__ == '__main__':
     with app.app_context():

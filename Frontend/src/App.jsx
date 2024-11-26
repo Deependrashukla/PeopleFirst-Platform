@@ -15,6 +15,7 @@ import Register from './Components/RoleSelection/Register';
 import RegisterWorker from './Components/RoleSelection/WorkerRegister'
 import EventList from './Components/work/EventList';
 import EventForm from './Components/work/EventForm';
+import EventDetails from './Components/work/EventDetails';
 
 function App() {
   const location = useLocation(); // Get the current route
@@ -34,6 +35,7 @@ function App() {
         <Route path="/select-role/worker/register" element={<RegisterWorker />} />
         <Route path="/cart" element={<EventList />} />
         <Route path="/event-form" element={<EventForm />} />
+        <Route path="/event-details" element={<EventDetails />} />
         {/* <Route path="/getworker" element={<GetWorker />} /> */}
       </Routes>
       {location.pathname === '/' && <Footer />}
