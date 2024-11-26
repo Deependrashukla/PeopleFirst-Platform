@@ -9,7 +9,8 @@ const EventForm = () => {
     startTime: '',
     endTime: '',
     priceRange: '',
-    category: ''
+    category: '',
+    aadhaarNumber: '' // Added aadhaarNumber field to form data state
   });
 
   const apiUrl = 'http://127.0.0.1:5000/add-listworker'; // Your Flask backend endpoint URL
@@ -122,11 +123,25 @@ const EventForm = () => {
         >
           <option value="" disabled>Select a category</option>
           <option value="cook">Cook</option>
-          <option value="maid">Cleaner</option>
+          <option value="maid">Maid</option>
           <option value="plumber">Plumber</option>
           <option value="electrician">Electrician</option>
           <option value="baby_sitter">Baby Sitter</option>
         </select>
+      </label>
+
+      {/* Aadhaar Number Input */}
+      <label>
+        Aadhaar Number:
+        <input
+          type="text"
+          name="aadhaarNumber"
+          value={formData.aadhaarNumber}
+          onChange={handleChange}
+          required
+          pattern="^[0-9]{12}$" // Ensure it is exactly 12 digits
+          title="Aadhaar number should be a 12-digit number"
+        />
       </label>
 
       <button type="submit">Submit Event</button>

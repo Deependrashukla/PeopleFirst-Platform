@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 # import pymysql
 from flask_cors import CORS
 from datetime import datetime
+from sqlalchemy import PrimaryKeyConstraint
 
 # Initialize the Flask app 
 app = Flask(__name__)
@@ -25,7 +26,8 @@ class Worker_login(db.Model):
     
     
 class Worker(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    __tablename__ = 'worker'
+
     first_name = db.Column(db.String(100), nullable=False)
     last_name = db.Column(db.String(100), nullable=False)
     address = db.Column(db.String(255), nullable=False)
@@ -40,6 +42,11 @@ class Worker(db.Model):
     aadhaar_card_photo = db.Column(db.String(255), nullable=True)  # Storing filename/path
     worker_photo = db.Column(db.String(255), nullable=True)  # Storing filename/path
 
+    # Define the composite primary key with aadhaar_number and occupation
+    __table_args__ = (
+        PrimaryKeyConstraint('aadhaar_number', 'occupation', name='pk_worker_aadhaar_occupation'),
+    )
+
     def __repr__(self):
         return f'<Worker {self.first_name} {self.last_name}>'
     
@@ -48,6 +55,8 @@ class Worker(db.Model):
 ########################################### List Worker Table #########################################
 
 class ListWorker(db.Model):
+    #__tablename__ = 'ListWorker'
+
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
     category = db.Column(
@@ -61,11 +70,18 @@ class ListWorker(db.Model):
     imageurl = db.Column(db.String(255), nullable=True)
     start_time = db.Column(db.DateTime, nullable=False)
     end_time = db.Column(db.DateTime, nullable=False)
+    aadhaar_number = db.Column(db.String(12), nullable=False)  # Reference to Worker
 
+    # Define constraints
     __table_args__ = (
         db.CheckConstraint(
             "category IN ('cook', 'plumber', 'maid', 'electrician', 'baby sitting')",
             name="valid_category"
+        ),
+        db.ForeignKeyConstraint(
+            ['aadhaar_number', 'category'],
+            ['worker.aadhaar_number', 'worker.occupation'],
+            name='fk_list_worker_worker'
         ),
     )
 
@@ -76,7 +92,8 @@ class ListWorker(db.Model):
 @app.route('/add-listworker', methods=['POST'])
 def add_listworker():
     data = request.get_json()  # Use get_json() to parse JSON body
-
+    print(data)
+    print('sonal')
     # Check if start_time and end_time are in the request data and are not None
     start_time_str = data.get('startTime')
     end_time_str = data.get('endTime')
@@ -99,7 +116,8 @@ def add_listworker():
         city=data.get('place'),
         imageurl=data.get('imageurl'),  # If needed, else remove this line
         start_time=start_time,
-        end_time=end_time
+        end_time=end_time,
+        aadhaar_number = data.get("aadhaarNumber")
     )
 
     db.session.add(new_listworker)
@@ -199,7 +217,18 @@ def register():
 @app.route('/register-worker', methods=['POST'])
 def register_worker():
     data = request.json
-    
+
+    # Ensure that aadhaar_card_photo and worker_photo are strings, not dictionaries
+    aadhaar_card_photo = data.get('aadhaarCardPhoto')
+    worker_photo = data.get('workerPhoto')
+
+    # If the photo fields are dictionaries (e.g., empty dict), convert them to strings or None
+    if isinstance(aadhaar_card_photo, dict):
+        aadhaar_card_photo = None  # or set a default value
+    if isinstance(worker_photo, dict):
+        worker_photo = None  # or set a default value
+        
+    print(data.get('age'), "age data")
     # Create a new Worker object
     new_worker = Worker(
         first_name=data.get('firstName'),
@@ -213,8 +242,8 @@ def register_worker():
         dob=datetime.strptime(data.get('dob'), '%Y-%m-%d'),
         age=data.get('age'),
         email=data.get('email'),
-        aadhaar_card_photo=data.get('aadhaarCardPhoto'),
-        worker_photo=data.get('workerPhoto')
+        aadhaar_card_photo=aadhaar_card_photo,
+        worker_photo=worker_photo
     )
 
     # Add the new worker to the session and commit to the database
@@ -222,6 +251,7 @@ def register_worker():
     db.session.commit()
 
     return jsonify({'message': 'Worker registered successfully'}), 201
+
 
 # Route to get all workers
 @app.route('/workers', methods=['GET'])

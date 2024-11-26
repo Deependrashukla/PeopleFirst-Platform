@@ -12,6 +12,7 @@ const RegisterWorker = () => {
     register,
     handleSubmit,
     watch,
+    setValue,  // Added setValue hook
     formState: { errors },
   } = useForm();
 
@@ -20,7 +21,7 @@ const RegisterWorker = () => {
       alert("Worker must be at least 18 years old.");
       return;
     }
-  
+
     console.log(data);
 
     fetch('http://127.0.0.1:5000/register-worker', {
@@ -34,18 +35,16 @@ const RegisterWorker = () => {
     .then(data => {
       console.log('Success:', data);
       alert("Registration successful! Data ready to be sent to the API.");
-      navigate("/services")
+      navigate("/services");
     })
     .catch((error) => {
       console.error('Error:', error);
       alert("Registration unsuccessful!");
     });
-
-    
   };
 
   const dob = watch('dob');
-  
+
   const calculateAge = (dob) => {
     if (dob) {
       const birthDate = new Date(dob);
@@ -56,6 +55,7 @@ const RegisterWorker = () => {
       if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
         age--;
       }
+      console.log("age:", age);
       return age;
     }
     return 0;
@@ -63,7 +63,9 @@ const RegisterWorker = () => {
 
   useEffect(() => {
     const calculatedAge = calculateAge(dob);
+    console.log("AGE: ", calculatedAge);
     setAge(calculatedAge);
+    setValue('age', calculatedAge);  // Set the calculated age to the form
   }, [dob]);
 
   const nextStep = () => setStep((prev) => prev + 1);
