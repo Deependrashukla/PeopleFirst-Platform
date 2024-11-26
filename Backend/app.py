@@ -1,19 +1,16 @@
 from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
-# from werkzeug.security import generate_password_hash
-# import pymysql
-import pusher
-
 from flask_cors import CORS
 from datetime import datetime
+from datetime import datetime
+import pusher
 
-# Initialize the Flask app 
+
 app = Flask(__name__)
 CORS(app)
 # Configure MySQL database connection
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://helpernest_user:AZt1yiyILymT3QWR6E7ULQ8IXsGWAu7U@dpg-csmvvmij1k6c73dpeh9g-a.oregon-postgres.render.com/helpernest'
-
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:Shourya22%40%40localhost/mydatabase'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 
@@ -25,7 +22,6 @@ pusher_client = pusher.Pusher(
     ssl=True
 )
 
-# Initialize SQLAlchemy
 db = SQLAlchemy(app)
 
 # Define a model for Workers (assuming you have a workers table)
@@ -48,13 +44,114 @@ class Worker(db.Model):
     dob = db.Column(db.Date, nullable=False)
     age = db.Column(db.Integer, nullable=False)
     email = db.Column(db.String(120), nullable=False, unique=True)
-    aadhaar_card_photo = db.Column(db.String(255), nullable=True)  # Storing filename/path
-    worker_photo = db.Column(db.String(255), nullable=True)  # Storing filename/path
+    aadhaar_card_photo = db.Column(db.String(255), nullable=True)
+    worker_photo = db.Column(db.String(255), nullable=True)
+    
+    completed_works = db.relationship('Work', foreign_keys='Work.worker_id', lazy='dynamic', backref='completed_by')
+    in_progress_works = db.relationship('Work', foreign_keys='Work.worker_id', lazy='dynamic', backref='in_progress_by')
+    awaiting_works = db.relationship('Work', foreign_keys='Work.worker_id', lazy='dynamic', backref='awaiting_by')
 
     def __repr__(self):
         return f'<Worker {self.first_name} {self.last_name}>'
+
+# Define a model for Work table
+class Work(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.String(255), nullable=False)
+    price = db.Column(db.String(50), nullable=False)
+    city = db.Column(db.String(100), nullable=False)
+    status = db.Column(db.String(20), nullable=False)  # status can be 'completed', 'in-progress', or 'awaiting'
+    start_time = db.Column(db.DateTime, nullable=False)
+    end_time = db.Column(db.DateTime, nullable=False)
+    worker_id = db.Column(db.Integer, db.ForeignKey('worker.id'), nullable=False)
+
+    def __repr__(self):
+        return f'<Work {self.title}>'
+
+# Endpoint to get worker's works based on their status
+@app.route('/worker-works/<int:worker_id>', methods=['GET'])
+def get_worker_works(worker_id):
+    worker = Worker.query.get(worker_id)
+    if not worker:
+        return jsonify({'message': 'Worker not found'}), 404
     
-    
+    completed_works = [{
+        'id': work.id,
+        'title': work.title,
+        'description': work.description,
+        'price': work.price,
+        'city': work.city,
+        'start_time': work.start_time.strftime('%Y-%m-%d %H:%M:%S'),
+        'end_time': work.end_time.strftime('%Y-%m-%d %H:%M:%S'),
+        'status': work.status
+    } for work in worker.completed_works]
+
+    in_progress_works = [{
+        'id': work.id,
+        'title': work.title,
+        'description': work.description,
+        'price': work.price,
+        'city': work.city,
+        'start_time': work.start_time.strftime('%Y-%m-%d %H:%M:%S'),
+        'end_time': work.end_time.strftime('%Y-%m-%d %H:%M:%S'),
+        'status': work.status
+    } for work in worker.in_progress_works]
+
+    awaiting_works = [{
+        'id': work.id,
+        'title': work.title,
+        'description': work.description,
+        'price': work.price,
+        'city': work.city,
+        'start_time': work.start_time.strftime('%Y-%m-%d %H:%M:%S'),
+        'end_time': work.end_time.strftime('%Y-%m-%d %H:%M:%S'),
+        'status': work.status
+    } for work in worker.awaiting_works]
+
+    return jsonify({
+        'completed': completed_works,
+        'in_progress': in_progress_works,
+        'awaiting': awaiting_works
+    })
+
+
+# Endpoint to add a new work
+@app.route('/add-work', methods=['POST'])
+def add_work():
+    data = request.get_json()
+
+    # Extract and validate data
+    worker_id = data.get('worker_id')
+    title = data.get('title')
+    description = data.get('description')
+    price = data.get('price')
+    city = data.get('city')
+    status = data.get('status')  # This should be 'completed', 'in-progress', or 'awaiting'
+    start_time = datetime.strptime(data.get('start_time'), '%Y-%m-%dT%H:%M')
+    end_time = datetime.strptime(data.get('end_time'), '%Y-%m-%dT%H:%M')
+
+    worker = Worker.query.get(worker_id)
+    if not worker:
+        return jsonify({'message': 'Worker not found'}), 404
+
+    # Create new work entry
+    new_work = Work(
+        title=title,
+        description=description,
+        price=price,
+        city=city,
+        status=status,
+        start_time=start_time,
+        end_time=end_time,
+        worker_id=worker_id
+    )
+
+    db.session.add(new_work)
+    db.session.commit()
+
+    return jsonify({'message': 'Work added successfully'}), 201
+
 
 ########################################### List Worker Table #########################################
 

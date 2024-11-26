@@ -1,0 +1,89 @@
+/* Reset some default styling */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Worker Dashboard container styling */
+.worker-dashboard {
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
+  padding: 2rem;
+  margin-top: 2rem;
+}
+
+/* Section styling for each column */
+.dashboard-section {
+  flex: 1;
+  background-color: #fff;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+/* Hover effect for each section */
+.dashboard-section:hover {
+  transform: translateY(-5px);
+}
+
+/* Titles for each section */
+.section-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+/* Specific section title colors */
+.green {
+  color: #27ae60;
+}
+
+.orange {
+  color: #f39c12;
+}
+
+.grey {
+  color: #95a5a6;
+}
+
+/* Styling for the job cards inside each section */
+.job-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.job-card {
+  padding: 1rem;
+  border-radius: 5px;
+  color: white;
+  text-align: center;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+/* Background colors for each job card */
+.green-bg {
+  background-color: #27ae60;
+}
+
+.orange-bg {
+  background-color: #f39c12;
+}
+
+.grey-bg {
+  background-color: #95a5a6;
+}
+
+/* Empty state message */
+.no-jobs {
+  text-align: center;
+  font-size: 1rem;
+  color: #7f8c8d;
+  font-style: italic;
+}

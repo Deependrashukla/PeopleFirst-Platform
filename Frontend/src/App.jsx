@@ -16,13 +16,13 @@ import RegisterWorker from './Components/RoleSelection/WorkerRegister'
 import EventList from './Components/work/EventList';
 import EventForm from './Components/work/EventForm';
 import EventDetails from './Components/work/EventDetails';
-
+import WorkerDashboard from './Components/worker_dashboard';
 function App() {
   const location = useLocation(); // Get the current route
-
+  const u = {name:'Deependra', job:'Study'}
   return (
     <div className="App">
-      <Navbar /> 
+      <Navbar user={u}/> 
       <Routes>
         <Route path="" element={<FirstPage />} /> 
         <Route path="/select-role" element={<RoleSelectionPage />} />
@@ -36,6 +36,7 @@ function App() {
         <Route path="/cart" element={<EventList />} />
         <Route path="/event-form" element={<EventForm />} />
         <Route path="/event-details" element={<EventDetails />} />
+        <Route path="/worker_dashboard" element={<WorkerDashboard workerId={2} />} />
         {/* <Route path="/getworker" element={<GetWorker />} /> */}
       </Routes>
       {location.pathname === '/' && <Footer />}

@@ -1,0 +1,79 @@
+/* Dashboard Container */
+.dashboard-container {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    background-color: #f7f7f7;
+  }
+  
+  /* Title */
+  .dashboard-title {
+    text-align: center;
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 20px;
+  }
+  
+  /* Section Styling */
+  .dashboard-section {
+    margin-bottom: 30px;
+  }
+  
+  .section-title {
+    font-size: 1.5rem;
+    color: #444;
+    margin-bottom: 15px;
+  }
+  
+  /* Cards Container */
+  .cards-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+  
+  /* Worker Card */
+  .worker-card {
+    flex: 1 1 calc(33.333% - 10px);
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+  }
+  
+  .worker-card:hover {
+    transform: scale(1.05);
+  }
+  
+  .worker-card h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: #222;
+  }
+  
+  .worker-card p {
+    margin: 5px 0 0;
+    font-size: 0.9rem;
+    color: #555;
+  }
+  
+  /* Background Colors */
+  .blue-bg {
+    border-left: 6px solid #007bff;
+  }
+  
+  .orange-bg {
+    border-left: 6px solid #ff9800;
+  }
+  
+  .green-bg {
+    border-left: 6px solid #4caf50;
+  }
+  
+  /* No Workers Message */
+  .no-workers {
+    color: #777;
+    font-style: italic;
+    margin: 10px;
+  }
+  

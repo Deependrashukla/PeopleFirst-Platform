@@ -9,7 +9,17 @@
 .navbar {
   background-color: #333;
   padding: 1rem;
-  text-align: center;
+  display: flex;
+  justify-content: space-between; /* Aligns left and right content */
+  align-items: center;
+  position: relative;
+}
+
+/* Navbar links container */
+.navbar-left {
+  display: flex;
+  justify-content: center;
+  flex-grow: 1;
 }
 
 /* Navbar list style */
@@ -29,4 +39,56 @@
 
 .navbar-links li a:hover {
   color: #f39c12; /* Change color on hover */
+}
+
+/* Profile container positioning */
+.navbar-right {
+  /* position: absolute; */
+  top: 1rem;
+  right: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+/* Profile circle (for the image) */
+.profile-circle {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: #f39c12;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+/* Hover effect on the profile circle */
+.profile-circle:hover {
+  background-color: #f1c40f;
+}
+
+/* Profile details (name and job) styling */
+.profile-details {
+  position: absolute;
+  background-color: #333;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  margin-top: 10px;
+  text-align: left;
+  min-width: 200px;
+}
+
+.profile-name {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.profile-job {
+  font-size: 1rem;
+  color: #ddd;
 }
