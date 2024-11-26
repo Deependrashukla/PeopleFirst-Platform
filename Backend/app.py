@@ -47,7 +47,7 @@ class Worker(db.Model):
 
 ########################################### List Worker Table #########################################
 
-class ListWorker(db.Model):
+class list_worker(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
     category = db.Column(
@@ -61,6 +61,7 @@ class ListWorker(db.Model):
     imageurl = db.Column(db.String(255), nullable=True)
     start_time = db.Column(db.DateTime, nullable=False)
     end_time = db.Column(db.DateTime, nullable=False)
+    aadhaar_number = db.Column(db.String(12), nullable=False)
 
     __table_args__ = (
         db.CheckConstraint(
@@ -91,7 +92,7 @@ def add_listworker():
         return jsonify({'message': 'Invalid date format. Use "YYYY-MM-DDTHH:mm"'}), 400
 
     # Now create the new listworker object
-    new_listworker = ListWorker(
+    new_listworker = list_worker(
         title=data.get('title'),
         category=data.get('category'),
         work_description=data.get('description'),
@@ -99,7 +100,8 @@ def add_listworker():
         city=data.get('place'),
         imageurl=data.get('imageurl'),  # If needed, else remove this line
         start_time=start_time,
-        end_time=end_time
+        end_time=end_time,
+        aadhaar_number = data.get("aadhaarNumber")
     )
 
     db.session.add(new_listworker)
@@ -122,7 +124,7 @@ def get_listworkers():
 
     try:
         # Query the ListWorker table with the given city and category
-        listworkers = ListWorker.query.filter_by(city=city, category=category).all()
+        listworkers = list_worker.query.filter_by(city=city, category=category).all()
 
         # Return results as JSON
         return jsonify([{
@@ -195,11 +197,20 @@ def register():
     db.session.add(new_worker)
     db.session.commit()
     return jsonify({'message': 'Worker registered successfully'}), 201
-
 @app.route('/register-worker', methods=['POST'])
 def register_worker():
     data = request.json
-    
+
+    # Ensure that aadhaar_card_photo and worker_photo are strings, not dictionaries
+    aadhaar_card_photo = data.get('aadhaarCardPhoto')
+    worker_photo = data.get('workerPhoto')
+
+    # If the photo fields are dictionaries (e.g., empty dict), convert them to strings or None
+    if isinstance(aadhaar_card_photo, dict):
+        aadhaar_card_photo = None  # or set a default value
+    if isinstance(worker_photo, dict):
+        worker_photo = None  # or set a default value
+
     # Create a new Worker object
     new_worker = Worker(
         first_name=data.get('firstName'),
@@ -213,8 +224,8 @@ def register_worker():
         dob=datetime.strptime(data.get('dob'), '%Y-%m-%d'),
         age=data.get('age'),
         email=data.get('email'),
-        aadhaar_card_photo=data.get('aadhaarCardPhoto'),
-        worker_photo=data.get('workerPhoto')
+        aadhaar_card_photo=aadhaar_card_photo,
+        worker_photo=worker_photo
     )
 
     # Add the new worker to the session and commit to the database
@@ -222,6 +233,7 @@ def register_worker():
     db.session.commit()
 
     return jsonify({'message': 'Worker registered successfully'}), 201
+
 
 # Route to get all workers
 @app.route('/workers', methods=['GET'])

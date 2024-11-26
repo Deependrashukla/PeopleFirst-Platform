@@ -15,37 +15,39 @@ const RegisterWorker = () => {
     formState: { errors },
   } = useForm();
 
+  const dob = watch('dob');  // Watch dob value for changes
+
   const onSubmit = (data) => {
+
+    const updatedData = { ...data, age };
+
     if (age < 18) {
       alert("Worker must be at least 18 years old.");
       return;
     }
   
-    console.log(data);
+    console.log(updatedData);
 
     fetch('http://127.0.0.1:5000/register-worker', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify(updatedData),
     })
     .then(response => response.json())
-    .then(data => {
-      console.log('Success:', data);
+    .then(updatedData => {
+      console.log('Success:', updatedData);
       alert("Registration successful! Data ready to be sent to the API.");
-      navigate("/services")
+      navigate("/services");
     })
     .catch((error) => {
       console.error('Error:', error);
       alert("Registration unsuccessful!");
     });
-
-    
   };
 
-  const dob = watch('dob');
-  
+  // Function to calculate age from dob
   const calculateAge = (dob) => {
     if (dob) {
       const birthDate = new Date(dob);
@@ -61,9 +63,14 @@ const RegisterWorker = () => {
     return 0;
   };
 
+
+  
+
   useEffect(() => {
-    const calculatedAge = calculateAge(dob);
-    setAge(calculatedAge);
+    // Recalculate age whenever dob changes
+    const calculatedAge1 = calculateAge(dob);
+    console.log("AGE:", calculatedAge1);
+    setAge(calculatedAge1);
   }, [dob]);
 
   const nextStep = () => setStep((prev) => prev + 1);

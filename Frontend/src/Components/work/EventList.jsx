@@ -52,12 +52,14 @@ const EventList = () => {
           <img src={event.imageUrl} alt={event.title} className="event-image" />
           <h2>{event.title}</h2>
           <p><strong>Category:</strong> {event.category}</p>
-          <p><strong>Place:</strong> {event.place}</p>
-          <p><strong>Start Time:</strong> {event.startTime}</p>
-          <p><strong>End Time:</strong> {event.endTime}</p>
-          <p><strong>Price Range:</strong> {event.priceRange}</p>
-          <p>{event.description}</p>
+          <p><strong>Place:</strong> {event.city}</p>
+          <p><strong>Start Time:</strong> {event.start_time}</p>
+          <p><strong>End Time:</strong> {event.end_time}</p>
+          <p><strong>Price Range:</strong> {event.price}</p>
+          <p>{event.work_description}</p>
         </div>
+
+
       ))}
     </div>
   );
