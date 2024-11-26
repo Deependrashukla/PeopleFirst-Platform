@@ -1,0 +1,98 @@
+/* Contributor Section */
+.about-contributors {
+    margin-top: 40px;
+  }
+  
+  .about-contributors h2 {
+    text-align: center;
+    font-size: 2rem;
+    color: #333333;
+    margin-bottom: 20px;
+  }
+  
+  .contributors-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 40px;
+    padding: 0 150px;
+
+  }
+  
+  .contributor-card {
+    background-color: #f8f8f8;
+    border: 1px solid #020202;
+    border-radius: 10px;
+    margin-left: 10px;
+    text-align: center;
+    padding: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease-in-out;
+  }
+  
+  .contributor-card:hover {
+    transform: translateY(-6px);
+  }
+  
+  .contributor-card img {
+    border-radius: 100%;
+    width: 150px;
+    height: 150px;
+    /* object-fit: cover; */
+    margin-bottom: 20px;
+    margin-top: 20px;
+  }
+  
+  .contributor-card h3 {
+    font-size: 1.2rem;
+    color: #222222;
+    margin: 10px 0 5px;
+  }
+  
+  .contributor-card .role {
+    font-size: 1rem;
+    font-weight: bold;
+    color: #555555;
+  }
+  
+  .contributor-card .description {
+    font-size: 0.9rem;
+    color: #666666;
+    margin-top: 5px;
+  }
+  
+
+/* Styling specifically for the About Us section */
+.custom-about-section {
+    margin-top: 20px;
+    margin-left: 80px;
+    margin-left: 90px;
+    padding: 50px; /* Adds padding for spacing */
+    max-width: 1200px; /* Restricts the width for better layout */
+    background-color: #ffffff; /* Optional: Background color */
+    border: 1px solid #dddddd; /* Optional: Border for clarity */
+    border-radius: 10px; /* Optional: Rounded corners */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Optional: Add subtle shadow */
+  }
+  
+  .custom-about-section h1,
+  .custom-about-section h2 {
+    text-align: center; /* Ensures headings are centered */
+    color: #333333; /* Unified heading color */
+  }
+  
+  .custom-about-section p {
+    text-align: center; /* Makes paragraphs neatly aligned */
+    color: #090909; /* Paragraph text color */
+    line-height: 1.6; /* Improves readability */
+  }
+  
+  /* Optional: Centering fixes */
+  .about-mission {
+    margin-top: 20px;
+  }
+
+  .about-contributors h2{
+    padding: 20px;
+
+  }
+  
