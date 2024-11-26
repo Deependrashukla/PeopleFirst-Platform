@@ -6,7 +6,12 @@ const Navbar = () => {
   return (
     <>
       <nav className="navbar">
+        <div>
+          
         <ul className="navbar-links">
+        <li>
+            <Link to="/">People First </Link>
+          </li>
           <li>
             <Link to="/">Home</Link>
           </li>
@@ -20,6 +25,7 @@ const Navbar = () => {
             <Link to="/services">Services</Link>
           </li>
         </ul>
+        </div>
       </nav>
       <Outlet /> {/* Outlet is used to render the matched child route */}
     </>

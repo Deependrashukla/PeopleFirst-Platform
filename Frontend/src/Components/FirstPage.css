@@ -16,6 +16,78 @@
   gap: 1rem;
 }
 
+
+/* Hero Section Styles */
+.hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2rem;
+  background-color: #e0f2f1;
+  height: 400px; /* Set a fixed height for equal alignment */
+  gap: 2rem; /* Space between text and image */
+}
+
+.heroContent {
+  flex: 1; /* Take up available space */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.heroTitle {
+  font-size: 2.5rem; /* Larger font for title */
+  font-weight: bold;
+  color: #004d40;
+  margin-bottom: 1rem;
+}
+
+.heroSubtitle {
+  font-size: 1.25rem; /* Slightly larger font for subtitle */
+  margin-bottom: 1.5rem;
+  color: #333;
+}
+
+.button {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  background-color: #004d40;
+  color: white;
+  border: none;
+  cursor: pointer;
+  margin-bottom: 1.5rem;
+}
+
+.partners {
+  display: flex;
+  gap: 1rem;
+  font-size: 1rem;
+  color: #555;
+}
+
+.partners span {
+  background-color: #fff;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Hero Image */
+.heroImage {
+  flex: 1; /* Take up the other half of the space */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.heroImage img {
+  width: 100%;
+  max-width: 300px; /* Set maximum width */
+  height: auto; /* Maintain aspect ratio */
+  border-radius: 10px; /* Optional: rounded corners */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for better appearance */
+}
+
 .navLink {
   color: white;
   text-decoration: none;
@@ -93,4 +165,37 @@
 .footerLink {
   color: white;
   text-decoration: none;
+}
+
+/* General Image Container Styles */
+.imageContainer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.imageContainer img {
+  width: 200px; /* Set a consistent width */
+  height: 200px; /* Set a consistent height */
+  object-fit: cover; /* Ensure images fit within the box */
+  border-radius: 8px; /* Optional: rounded corners for a modern look */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: subtle shadow */
+  transition: transform 0.3s ease; /* Optional: smooth hover effect */
+}
+
+.imageContainer img:hover {
+  transform: scale(1.05); /* Slight zoom effect on hover */
+}
+
+/* Specific Section Adjustments */
+.experts .imageContainer {
+  margin-top: 1rem;
+}
+
+.resources .guideImage {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
 }

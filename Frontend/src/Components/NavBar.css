@@ -3,13 +3,16 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  margin-left: 5px;
 }
 
 /* Navbar container styling */
 .navbar {
-  background-color: #333;
+  background-color: #004d40;
   padding: 1rem;
-  text-align: center;
+  text-align: left;
+  border-radius: 10px;
+
 }
 
 /* Navbar list style */
@@ -18,13 +21,15 @@
   display: flex;
   justify-content: center;
   gap: 2rem;
+  margin-left: 90px;
 }
 
 /* Navbar links styling */
 .navbar-links li a {
   text-decoration: none;
   color: white;
-  font-size: 1.2rem;
+  font-size: 1.7rem;
+  margin-left: 23px;
 }
 
 .navbar-links li a:hover {

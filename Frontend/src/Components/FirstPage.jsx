@@ -11,53 +11,57 @@ const LandingPage = () => {
     return (
         <div>
             {/* Header */}
-            <header className="header">
-                <div className="logo">PeopleBridge</div>
+            {/* <header className="header">
+                <div className="logo">People First</div>
                 <nav className="nav">
-                    <a href="#home" className="navLink">Home</a>
-                    <a href="#about" className="navLink">About</a>
-                    <a href="#services" className="navLink">Services</a>
-                    <a href="#contact" className="navLink">Contact</a>
-                    <a href="#quote" className="navLink">Get a Quote</a>
+                    <a href="/" className="navLink">Home</a>
+                    <a href="/about" className="navLink">About</a>
+                    <a href="/services" className="navLink">Services</a>
+                    <a href="/contact" className="navLink">Contact</a>
+                    
                 </nav>
-            </header>
+            </header> */}
 
-            {/* Hero Section */}
+          {/* Hero Section */}
             <section id="home" className="hero">
-                <div className="heroContent">
-                    <h1>We bridge the gap between you and dependable</h1>
-                    <p>Whether you need help with home improvement, office tasks, or specialized services</p>
-                    <button className="button">Get Started Now</button>
-                    <div className="partners">
-                        <span>Shell</span>
-                        <span>Ferrari</span>
-                        <span>Apple</span>
-                        <span>Microsoft</span>
-                    </div>
+            <div className="heroContent">
+                <h1 className="heroTitle">We bridge the gap between you and dependable</h1>
+                <p className="heroSubtitle">
+                Whether you need help with home improvement, office tasks, or specialized services
+                </p>
+                <button className="button">Get Started Now</button>
+                <div className="partners">
+                <span>Shell</span>
+                <span>Ferrari</span>
+                <span>Apple</span>
+                <span>Microsoft</span>
                 </div>
-                <div className="heroImage">
-                    <img src={heroImage} alt="Hero" className="placeholderImage" />
-                </div>
+            </div>
+            <div className="heroImage">
+                <img src={heroImage} alt="Hero" />
+            </div>
             </section>
+
 
             {/* Experts Section */}
             <section className="experts">
                 <h2>Our Experts</h2>
                 <p>Meet the skilled professionals ready to assist you</p>
-                <div className="expertsNav">
-                    <span>Call Us</span>
-                    <span>Schedule</span>
-                    <span>Explore Services</span>
-                    <span>FAQ</span>
-                    <span>Learn More</span>
-                </div>
-                <div className="expertProfile">
-                    <img src={workerImage} alt="Expert" className="expertImage" />
-                    <h3>Let's Bring Your Vision to Life</h3>
-                    <p>At People First, we bridge the gap between you and dependable, skilled workers...</p>
-                    <button className="button">Get Started</button>
-                </div>
+            <div className="expertsNav">
+                <span>Call Us</span>
+                <span>Schedule</span>
+                <span>Explore Services</span>
+                <span>FAQ</span>
+                <span>Learn More</span>
+            </div>
+            <div className="imageContainer">
+                <img src={workerImage} alt="Expert" />
+                <img src={guideImage} alt="Guide" />
+                <img src={quality} alt="Quality" />
+                <img src={satisfaction} alt="Satisfaction" />
+            </div>
             </section>
+
 
             {/* Careers Section */}
             <section className="careers">
@@ -71,8 +75,11 @@ const LandingPage = () => {
                 <h2>Helpful Guides</h2>
                 <p>Explore our library of informative resources...</p>
                 <button className="button">Learn More</button>
-                <img src={guideImage} alt="Guide" className="guideImage" />
+                <div className="imageContainer">
+                <img src={guideImage} alt="Guide" />
+                </div>
             </section>
+
 
             {/* Company Section */}
             <section className="company">
