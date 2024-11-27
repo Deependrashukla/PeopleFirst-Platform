@@ -40,3 +40,54 @@
     text-decoration: underline;
   }
   
+
+  /* Footer Section */
+.footer {
+    background-color: #00264d; /* Dark navy blue for a professional look */
+    color: #ffffff; /* White text for contrast */
+    padding: 2rem 1rem;
+    text-align: center;
+}
+
+.footer p {
+    margin: 0 0 1rem;
+    font-size: 1rem;
+    color: #a8c3da; /* Subtle light shade for secondary text */
+}
+
+.footerLinks {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap; /* Makes it responsive */
+    margin-top: 1rem;
+}
+
+.footerLink {
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 500; /* Slightly bold for better visibility */
+    position: relative;
+    transition: color 0.3s ease-in-out;
+}
+
+.footerLink::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: -5px;
+    width: 0;
+    height: 2px;
+    background-color: #a8c3da; /* Light accent color */
+    transition: width 0.3s ease-in-out, left 0.3s ease-in-out;
+}
+
+.footerLink:hover {
+    color: #a8c3da; /* Matches the accent color */
+}
+
+.footerLink:hover::after {
+    width: 100%;
+    left: 0;
+}

@@ -199,3 +199,230 @@
   height: 200px;
   object-fit: cover;
 }
+
+/* Experts Section */
+.experts {
+  text-align: center;
+  padding: 2rem;
+  background-color: #f9f9f9; /* Light background color */
+  color: #333; /* Text color */
+}
+
+.experts h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: #0056b3; /* Primary color for heading */
+}
+
+.experts p {
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+  color: #555; /* Secondary text color */
+}
+
+.expertsNav {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.expertsNav span {
+  padding: 0.5rem 1rem;
+  border: 1px solid #0056b3;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.expertsNav span:hover {
+  background-color: #0056b3;
+  color: #fff;
+}
+
+.imageContainer {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap; /* Allows wrapping on smaller screens */
+}
+
+.imageContainer img {
+  width: 150px; /* Adjust based on your needs */
+  height: 150px;
+  border-radius: 10px;
+  object-fit: cover;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.imageContainer img:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Careers Section */
+.careers {
+  text-align: center;
+  padding: 2rem;
+  background-color: #eaf7ff; /* Light blue background */
+  color: #333;
+}
+
+.careers h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: #0056b3; /* Primary color for heading */
+}
+
+.careers p {
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
+  color: #555;
+}
+
+.careers .button {
+  padding: 0.8rem 2rem;
+  background-color: #0056b3;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.careers .button:hover {
+  background-color: #003f88;
+  transform: scale(1.05);
+}
+
+
+
+/* Resources Section */
+.resources {
+  text-align: center;
+  padding: 2rem;
+  background-color: #f9f9f9; /* Neutral background color */
+  color: #333;
+}
+
+.resources h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: #0056b3; /* Primary color for heading */
+}
+
+.resources p {
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
+  color: #555;
+}
+
+.resources .button {
+  padding: 0.8rem 2rem;
+  background-color: #0056b3;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.resources .button:hover {
+  background-color: #003f88;
+  transform: scale(1.05);
+}
+
+.resources .imageContainer {
+  margin-top: 2rem;
+}
+
+.resources .imageContainer img {
+  width: 300px; /* Adjust as needed */
+  border-radius: 10px;
+  object-fit: cover;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.resources .imageContainer img:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+
+
+/* Testimonials section styling */
+.testimonials-section {
+  margin: 40px 0;
+  padding: 20px;
+  background: #f0f8ff;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.testimonials-section h2 {
+  font-size: 1.8rem;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+/* Testimonials grid layout */
+.testimonials-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+  justify-items: center;
+}
+
+/* Individual testimonial card styling */
+.testimonial-card {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.testimonial-card:after {
+  content: "";
+  position: absolute;
+  bottom: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 15px 15px 0 15px;
+  border-color: #fff transparent transparent transparent;
+}
+
+/* Testimonial text content */
+.testimonial-content {
+  font-size: 1rem;
+  font-style: italic;
+  color: #555;
+  margin-bottom: 15px;
+}
+
+/* Author and star rating */
+.testimonial-author {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #333;
+}
+
+.testimonial-author span {
+  color: #ffd700; /* Gold stars */
+  margin-bottom: 5px;
+}
+
+.testimonial-author h4 {
+  margin: 0;
+  font-weight: bold;
+}

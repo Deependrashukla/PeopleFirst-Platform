@@ -6,8 +6,9 @@ import Footer from './Components/Footer';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom'; // Import routing components
 import RoleSelectionPage from './Components/RoleSelectionPage';
 import About from './Components/Pages/About';
+
 import Contact from './Components/Pages/Contact';
-import Services from './Components/Pages/Services';
+import Services from './Components/Pages/ServicesPage';
 import Worker from './Components/RoleSelection/Worker';
 import Customer from './Components/RoleSelection/Customer';
 import Register from './Components/RoleSelection/Register';

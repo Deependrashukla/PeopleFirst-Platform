@@ -41,10 +41,11 @@ const LandingPage = () => {
                 <img src={heroImage} alt="Hero" />
             </div>
             </section>
+            
 
 
-            {/* Experts Section */}
-            <section className="experts">
+              {/* Experts Section */}
+              <section className="experts">
                 <h2>Our Experts</h2>
                 <p>Meet the skilled professionals ready to assist you</p>
             <div className="expertsNav">
@@ -61,6 +62,52 @@ const LandingPage = () => {
                 <img src={satisfaction} alt="Satisfaction" />
             </div>
             </section>
+
+                  {/* Testimonials Section */}
+<div className="testimonials-section">
+  <h2>What Our Customers Say</h2>
+  <div className="testimonials-grid">
+    <div className="testimonial-card">
+      <div className="testimonial-content">
+        <p>"The cleaner did a fantastic job. My house has never looked better!"</p>
+      </div>
+      <div className="testimonial-author">
+        <span>⭐⭐⭐⭐⭐</span>
+        <h4>– Riya</h4>
+      </div>
+    </div>
+    <div className="testimonial-card">
+      <div className="testimonial-content">
+        <p>"The electrician was punctual and fixed everything perfectly."</p>
+      </div>
+      <div className="testimonial-author">
+        <span>⭐⭐⭐⭐⭐</span>
+        <h4>– Suresh</h4>
+      </div>
+    </div>
+    <div className="testimonial-card">
+      <div className="testimonial-content">
+        <p>"Great service by the plumber. Efficient and courteous!"</p>
+      </div>
+      <div className="testimonial-author">
+        <span>⭐⭐⭐⭐⭐</span>
+        <h4>– Anjali</h4>
+      </div>
+    </div>
+    <div className="testimonial-card">
+      <div className="testimonial-content">
+        <p>"The cook provided was excellent. Delicious meals every day!"</p>
+      </div>
+      <div className="testimonial-author">
+        <span>⭐⭐⭐⭐⭐</span>
+        <h4>– Ravi</h4>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+          
 
 
             {/* Careers Section */}
@@ -97,16 +144,7 @@ const LandingPage = () => {
             </section>
 
             {/* Footer */}
-            <footer className="footer">
-                <p>&copy; 2024 PeopleBridge, Inc. All rights reserved.</p>
-                <div className="footerLinks">
-                    <a href="/" className="footerLink">Home</a>
-                    <a href="/about" className="footerLink">About</a>
-                    <a href="/services" className="footerLink">Services</a>
-                    <a href="/contact" className="footerLink">Contact</a>
-                    <a href="/privacy" className="footerLink">Privacy Policy</a>
-                </div>
-            </footer>
+            
         </div>
     );
 };
