@@ -2,6 +2,21 @@ import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import './WorkerRegister.css'; // Import the CSS file
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage"; // Import Firebase storage utilities
+import { auth, storage } from '../../firebase-config';
+
+// Function to upload a file to Firebase Storage
+const uploadFile = async (file, path) => {
+  if (!file) return null;
+  try {
+    const storageRef = ref(storage, path);
+    const snapshot = await uploadBytes(storageRef, file);
+    return await getDownloadURL(snapshot.ref); // Get the public download URL
+  } catch (error) {
+    console.error("Error uploading file:", error);
+    return null;
+  }
+};
 
 const RegisterWorker = () => {
   const [age, setAge] = useState(0);
@@ -134,22 +149,45 @@ const RegisterWorker = () => {
           </>
         )}
 
-        {/* Step 4: Additional Information */}
-        {step === 4 && (
-          <>
-            <div>
-              <label>Aadhaar Card Photo</label>
-              <input type="file" {...register('aadhaarCardPhoto', { required: true })} />
-              {errors.aadhaarCardPhoto && <p>Aadhaar card photo is required</p>}
-            </div>
-            <div>
-              <label>Worker's Photo</label>
-              <input type="file" {...register('workerPhoto', { required: true })} />
-              {errors.workerPhoto && <p>Worker's photo is required</p>}
-            </div>
-            <button type="button" onClick={prevStep}>Back</button>
-            <button type="button" onClick={nextStep}>Next</button>
-          </>
+    {step === 4 && (
+      <>
+        <div>
+          <label>Aadhaar Card Photo</label>
+          <input
+            type="file"
+            accept="image/*"
+            {...register("aadhaarCardPhoto", { required: true })}
+            onChange={async (e) => {
+              const file = e.target.files[0];
+              const path = `aadhaarPhotos/${Date.now()}_${file.name}`;
+              const url = await uploadFile(file, path);
+              if (url) console.log("Aadhaar Card Photo URL:", url); // Log URL for testing
+            }}
+          />
+          {errors.aadhaarCardPhoto && <p>Aadhaar card photo is required</p>}
+        </div>
+        <div>
+          <label>Worker's Photo</label>
+          <input
+            type="file"
+            accept="image/*"
+            {...register("workerPhoto", { required: true })}
+            onChange={async (e) => {
+              const file = e.target.files[0];
+              const path = `workerPhotos/${Date.now()}_${file.name}`;
+              const url = await uploadFile(file, path);
+              if (url) console.log("Worker's Photo URL:", url); // Log URL for testing
+            }}
+          />
+          {errors.workerPhoto && <p>Worker's photo is required</p>}
+        </div>
+        <button type="button" onClick={prevStep}>
+          Back
+        </button>
+        <button type="button" onClick={nextStep}>
+          Next
+        </button>
+        </>
         )}
 
         {/* Step 5: Contact and Personal Information */}

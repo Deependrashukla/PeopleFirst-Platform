@@ -2,6 +2,7 @@
 import './App.css';
 import Navbar from './Components/Navbar';
 import FirstPage from './Components/FirstPage';
+import ImageUpload from './Components/ImageUpload';
 import Footer from './Components/Footer';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom'; // Import routing components
 import RoleSelectionPage from './Components/RoleSelectionPage';
@@ -17,6 +18,7 @@ import EventList from './Components/work/EventList';
 import EventForm from './Components/work/EventForm';
 import EventDetails from './Components/work/EventDetails';
 
+
 function App() {
   const location = useLocation(); // Get the current route
 
@@ -28,6 +30,7 @@ function App() {
         <Route path="/select-role" element={<RoleSelectionPage />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/imageupload" element={<ImageUpload />} />
         <Route path="/services" element={<Services />} />
         <Route path="/select-role/worker" element={<Worker />} />
         <Route path="/select-role/customer" element={<Customer />} />

@@ -7,6 +7,15 @@ import pusher
 from flask_cors import CORS
 from datetime import datetime
 
+import firebase_admin
+from firebase_admin import credentials, storage
+
+# Initialize Firebase
+cred = credentials.Certificate(r"C:\Users\LENOVO\Downloads\peoplefirst-caba5-firebase-adminsdk-yhvto-516641ae4b.json")  # Replace with the path to your JSON key
+firebase_admin.initialize_app(cred, {
+    'storageBucket': 'peoplefirst-caba5.appspot.com'  # Replace with your Firebase bucket
+})
+
 # Initialize the Flask app 
 app = Flask(__name__)
 CORS(app)
@@ -213,7 +222,7 @@ def register():
 @app.route('/register-worker', methods=['POST'])
 def register_worker():
     data = request.json
-
+    print(data)
     # Ensure that aadhaar_card_photo and worker_photo are strings, not dictionaries
     aadhaar_card_photo = data.get('aadhaarCardPhoto')
     worker_photo = data.get('workerPhoto')

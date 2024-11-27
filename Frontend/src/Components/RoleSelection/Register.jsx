@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-
-import "./Customer.css";
+import { useNavigate, Link } from 'react-router-dom'; // Import Link for navigation
+import { createUserWithEmailAndPassword } from 'firebase/auth'; // Firebase Authentication imports
+import { auth } from '../../firebase-config'; // Import the Firebase auth instance
+import './Customer.css';
 
 const Register = () => {
   const [email, setEmail] = useState('');
@@ -11,28 +12,20 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const customerData = { email, password };
 
     try {
-      const response = await fetch('http://127.0.0.1:5000/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(customerData),
-      });
+      // Use Firebase createUserWithEmailAndPassword method to register the user
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
 
-      if (response.ok) {
-        const data = await response.json();
-        console.log('Login successful:', data);
-        navigate('/select-role'); // Redirect on successful login
-      } else {
-        const errorData = await response.json();
-        setError(errorData.message || 'Login failed'); // Set error message
-      }
+      console.log('Registration successful:', user);
+
+      // Redirect to the select-role page on successful registration
+      navigate('/select-role'); 
     } catch (error) {
-      console.error('Error:', error);
-      setError('Something went wrong. Please try again.');
+      // Handle Firebase errors
+      console.error('Error during registration:', error);
+      setError(error.message || 'Registration failed. Please try again.');
     }
   };
 
@@ -61,7 +54,7 @@ const Register = () => {
         {error && <p className="error-message">{error}</p>} {/* Display error if any */}
         <button type="submit">Register</button>
         <p className="register-link">
-          Already have an account? <Link to="/select-role/customer" style={{ color: 'blue' }}>Register</Link>
+          Already have an account? <Link to="/select-role/customer" style={{ color: 'blue' }}>Login</Link>
         </p>
       </form>
     </div>
