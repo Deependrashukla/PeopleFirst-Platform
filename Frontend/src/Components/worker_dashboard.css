@@ -1,43 +1,56 @@
-/* Reset some default styling */
+/* General Reset */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* Worker Dashboard container styling */
+/* Worker Dashboard Layout */
 .worker-dashboard {
+  font-family: Arial, sans-serif;
+  padding: 2rem;
+  background-color: #f9f9f9;
+}
+
+/* Dashboard Title */
+.dashboard-title {
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #2c3e50;
+}
+
+/* Columns Layout */
+.dashboard-columns {
   display: flex;
   justify-content: space-between;
   gap: 2rem;
-  padding: 2rem;
-  margin-top: 2rem;
 }
 
-/* Section styling for each column */
+/* Section Styling */
 .dashboard-section {
   flex: 1;
-  background-color: #fff;
-  padding: 1rem;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: #ffffff;
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease;
 }
 
-/* Hover effect for each section */
 .dashboard-section:hover {
   transform: translateY(-5px);
 }
 
-/* Titles for each section */
+/* Section Titles */
 .section-title {
+  text-align: center;
+  margin-bottom: 1.5rem;
   font-size: 1.5rem;
   font-weight: bold;
-  text-align: center;
-  margin-bottom: 1rem;
 }
 
-/* Specific section title colors */
+/* Color Themes for Titles */
 .green {
   color: #27ae60;
 }
@@ -47,10 +60,10 @@
 }
 
 .grey {
-  color: #95a5a6;
+  color: #7f8c8d;
 }
 
-/* Styling for the job cards inside each section */
+/* Job Cards */
 .job-cards {
   display: flex;
   flex-direction: column;
@@ -58,32 +71,42 @@
 }
 
 .job-card {
+  background-color: #ecf0f1;
   padding: 1rem;
   border-radius: 5px;
-  color: white;
+  color: #2c3e50;
+  font-size: 1rem;
+  font-weight: 500;
   text-align: center;
-  font-weight: bold;
+  transition: all 0.3s ease;
   cursor: pointer;
-  transition: background-color 0.3s ease;
 }
 
-/* Background colors for each job card */
+/* Hover Effect */
+.job-card:hover {
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Card Background Colors */
 .green-bg {
-  background-color: #27ae60;
+  background-color: #2ecc71;
+  color: #ffffff;
 }
 
 .orange-bg {
-  background-color: #f39c12;
+  background-color: #e67e22;
+  color: #ffffff;
 }
 
 .grey-bg {
   background-color: #95a5a6;
+  color: #ffffff;
 }
 
-/* Empty state message */
+/* No Jobs Message */
 .no-jobs {
   text-align: center;
   font-size: 1rem;
-  color: #7f8c8d;
+  color: #bdc3c7;
   font-style: italic;
 }

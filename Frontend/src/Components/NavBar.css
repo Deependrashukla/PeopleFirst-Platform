@@ -51,44 +51,97 @@
   align-items: flex-end;
 }
 
-/* Profile circle (for the image) */
+
+/* ################################### Profile Section ##################################### */
+
+/* Profile Container */
+.profile-container {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+/* Profile Icon (Circle) */
 .profile-circle {
-  width: 50px;
-  height: 50px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  background-color: #f39c12;
+  background-color: #007bff;
   color: white;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
-  cursor: pointer;
+  font-size: 1.2rem;
+  font-weight: bold;
   transition: background-color 0.3s ease;
 }
 
-/* Hover effect on the profile circle */
 .profile-circle:hover {
-  background-color: #f1c40f;
+  background-color: #0056b3;
 }
 
-/* Profile details (name and job) styling */
-.profile-details {
+/* Dropdown Menu */
+.profile-dropdown {
   position: absolute;
-  background-color: #333;
-  color: white;
-  padding: 10px;
-  border-radius: 5px;
-  margin-top: 10px;
-  text-align: left;
-  min-width: 200px;
+  top: 50px;
+  right: 0;
+  background-color: white;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  width: 200px;
+  z-index: 1000;
+  overflow: hidden;
 }
 
+.profile-dropdown::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  right: 20px;
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 10px solid white;
+}
+
+/* Dropdown Content */
 .profile-name {
-  font-size: 1.2rem;
+  font-size: 1rem;
   font-weight: bold;
+  color: #333;
+  margin: 10px;
+  text-align: center;
 }
 
 .profile-job {
-  font-size: 1rem;
-  color: #ddd;
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.profile-actions {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border-top: 1px solid #f0f0f0;
+}
+
+.profile-actions li {
+  padding: 10px;
+  text-align: center;
+}
+
+.profile-actions button {
+  background: none;
+  border: none;
+  font-size: 0.9rem;
+  color: #007bff;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.profile-actions button:hover {
+  color: #0056b3;
 }
