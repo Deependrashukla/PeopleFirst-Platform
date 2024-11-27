@@ -6,19 +6,55 @@ const EventList = () => {
   const [events, setEvents] = useState([]);
   const [city, setCity] = useState('');
   const [category, setCategory] = useState('');
+  const [authToken, setAuthToken] = useState('');
+
+  useEffect(() => {
+    const fetchAuthToken = async () => {
+        try {
+            const user = auth.currentUser;
+            if (user) {
+                const token = await user.getIdToken();
+                setAuthToken(token);
+            } else {
+                console.log("User not logged in");
+            }
+        } catch (error) {
+            const errorMessage = error.message.match(/\(([^)]+)\)/)[1];
+            console.error("Error fetching auth token:", errorMessage);
+        }
+    };
+
+    fetchAuthToken();
+}, []);
   
   const apiUrl = 'http://127.0.0.1:5000/listworkers'; // Replace with your Flask backend endpoint URL
 
   const fetchData = () => {
     const query = new URLSearchParams({ city, category }).toString();
     const url = `${apiUrl}?${query}`;
-
+  
     fetch(url)
-      .then(response => response.json())
-      .then(data => setEvents(data || []))  // Assuming response is the list of events
-      .catch(error => console.error('Error fetching data:', error));
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log("Fetched Data:", data); // Debug API response
+        if (Array.isArray(data)) {
+          setEvents(data);
+        } else {
+          console.error("Unexpected data format, expected an array:", data);
+          setEvents([]);
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching data:', error);
+        setEvents([]); // Reset events to an empty array on error
+      });
   };
-
+  
   useEffect(() => {
     if (city && category) {
       fetchData();

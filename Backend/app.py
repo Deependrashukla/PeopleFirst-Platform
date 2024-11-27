@@ -6,6 +6,8 @@ from datetime import datetime
 
 import firebase_admin
 from firebase_admin import credentials, storage
+import pusher
+from firebase import verify_firebase_token
 
 # Initialize Firebase
 cred = credentials.Certificate(r"C:\Users\LENOVO\Downloads\peoplefirst-caba5-firebase-adminsdk-yhvto-516641ae4b.json")  # Replace with the path to your JSON key
@@ -34,7 +36,9 @@ db = SQLAlchemy(app)
 class Worker_login(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    password = db.Column(db.String(80), nullable=False)
+    first_name = db.Column(db.String(100))
+    last_name = db.Column(db.String(100))
+    # password = db.Column(db.String(80), nullable=False)
     
     
 class Worker(db.Model):
@@ -190,6 +194,13 @@ class list_worker(db.Model):
 # Adding a sample route for creating a ListWorker entry
 @app.route('/add-listworker', methods=['POST'])
 def add_listworker():
+    decoded_token, error_response = verify_firebase_token()
+    if error_response:
+        return jsonify(error_response)
+
+    #email = decoded_token.get('email')
+    
+    
     data = request.get_json()  # Use get_json() to parse JSON body
 
     # Check if start_time and end_time are in the request data and are not None
@@ -226,6 +237,11 @@ def add_listworker():
 
 @app.route('/listworkers', methods=['GET'])
 def get_listworkers():
+    # decoded_token, error_response = verify_firebase_token()
+    # if error_response:
+    #     return jsonify(error_response)
+
+    # email = decoded_token.get('email')
     city = request.args.get('city')
     category = request.args.get('category')
 
@@ -269,46 +285,48 @@ def get_listworkers():
 #     return {'result'}
 
 # Route to handle login
-@app.route('/login', methods=['POST'])
-def login():
-    data = request.get_json()
+# @app.route('/login', methods=['POST'])
+# def login():
+#     data = request.get_json()
 
-    # Extract email and password from the request body
-    email = data.get('email')
-    password = data.get('password')
+#     # Extract email and password from the request body
+#     email = data.get('email')
+#     password = data.get('password')
 
-    if not email or not password:
-        return jsonify({'message': 'Email and password are required'}), 400
+#     if not email or not password:
+#         return jsonify({'message': 'Email and password are required'}), 400
 
-    # Check if the worker exists in the database
-    worker = Worker_login.query.filter_by(email=email).first()
+#     # Check if the worker exists in the database
+#     worker = Worker_login.query.filter_by(email=email).first()
     
-    print("worker", worker)
-    if worker:
-        if worker.password == password:
-            return jsonify({'message': 'Login successful'}), 200
-        else:
-            return jsonify({'message': 'Invalid email or password'}), 401
-    else:
-        return jsonify({'message': 'Worker does not exist. Please register.'}), 404
+#     print("worker", worker)
+#     if worker:
+#         if worker.password == password:
+#             return jsonify({'message': 'Login successful'}), 200
+#         else:
+#             return jsonify({'message': 'Invalid email or password'}), 401
+#     else:
+#         return jsonify({'message': 'Worker does not exist. Please register.'}), 404
 
     
 @app.route('/register', methods=['POST'])
 def register():
     data = request.get_json()
+    print(data)
     email = data.get('email')
-    password = data.get('password')
-
-    if not email or not password:
-        return jsonify({'message': 'Email and password are required'}), 400
+    first_name = data.get('firstName')
+    last_name = data.get('lastName')
+    
+    # if not email or not password:
+    #     return jsonify({'message': 'Email and password are required'}), 400
 
     # Check if the worker already exists
     existing_worker = Worker_login.query.filter_by(email=email).first()
     if existing_worker:
+        
         return jsonify({'message': 'Worker already registered'}), 409
-
     # Create a new worker
-    new_worker = Worker_login(email=email, password=password)  # Hash the password in a real scenario
+    new_worker = Worker_login(first_name=first_name, last_name = last_name, email=email)  # Hash the password in a real scenario
     db.session.add(new_worker)
     db.session.commit()
     return jsonify({'message': 'Worker registered successfully'}), 201
@@ -354,6 +372,11 @@ def register_worker():
 # Route to get all workers
 @app.route('/workers', methods=['GET'])
 def get_workers():
+    decoded_token, error_response = verify_firebase_token()
+    if error_response:
+        return jsonify(error_response)
+
+    email = decoded_token.get('email')
     workers = Worker.query.all()
     return jsonify([{
         'id': worker.id,
@@ -374,6 +397,11 @@ def get_workers():
 
 @app.route('/book-appointment', methods=['POST'])
 def book_appointment():
+    decoded_token, error_response = verify_firebase_token()
+    if error_response:
+        return jsonify(error_response)
+
+    email = decoded_token.get('email')
     try:
         data = request.get_json()
 

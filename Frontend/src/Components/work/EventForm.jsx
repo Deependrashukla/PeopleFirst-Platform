@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import "./EventForm.css";
 
 const EventForm = () => {
@@ -12,6 +12,26 @@ const EventForm = () => {
         category: '',
         aadhaarNumber: '' // Add aadhaarNumber to form state
     });
+
+    const [authToken, setAuthToken] = useState('');
+    useEffect(() => {
+        const fetchAuthToken = async () => {
+            try {
+                const user = auth.currentUser;
+                if (user) {
+                    const token = await user.getIdToken();
+                    setAuthToken(token);
+                } else {
+                    console.log("User not logged in");
+                }
+            } catch (error) {
+                const errorMessage = error.message.match(/\(([^)]+)\)/)[1];
+                console.error("Error fetching auth token:", errorMessage);
+            }
+        };
+    
+        fetchAuthToken();
+    }, []);
 
     const apiUrl = 'http://127.0.0.1:5000/add-listworker'; // Your Flask backend endpoint URL
 
@@ -30,6 +50,8 @@ const EventForm = () => {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
+                ,
+                'Authorization': `Bearer ${authToken}`, 
             },
             body: JSON.stringify(formData)
         })

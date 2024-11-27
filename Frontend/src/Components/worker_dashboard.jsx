@@ -1,10 +1,33 @@
 import React, { useEffect, useState } from "react";
 import "./worker_dashboard.css"; // Updated CSS for styling
 
-const WorkerDashboard = ({ workerId }) => {
+const WorkerDashboard = () => {
   const [workerData, setWorkerData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [authToken, setAuthToken] =  useState('');
+
+  useEffect(() => {
+    const fetchAuthToken = async () => {
+        try {
+            const user = auth.currentUser;
+            if (user) {
+                const token = await user.getIdToken();
+                setAuthToken(token);
+            } else {
+                console.log("User not logged in");
+            }
+        } catch (error) {
+            const errorMessage = error.message.match(/\(([^)]+)\)/)[1];
+            console.error("Error fetching auth token:", errorMessage);
+        }
+    };
+
+
+
+
+    fetchAuthToken();
+    }, []);
 
   useEffect(() => {
     const fetchWorkerWorks = async () => {

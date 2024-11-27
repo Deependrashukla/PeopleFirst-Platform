@@ -3,7 +3,7 @@ import { Link, Outlet } from 'react-router-dom'; // Import Link and Outlet
 import Profile from './profile'; // Import Profile component
 import './Navbar.css'; // Import the CSS file for styling
 
-const Navbar = ({ user }) => {
+const Navbar = () => {
   return (
     <>
       <nav className="navbar">
@@ -24,7 +24,7 @@ const Navbar = ({ user }) => {
           </ul>
         </div>
         <div className="navbar-right">
-          <Profile user={user} />
+          <Profile/>
         </div>
       </nav>
       <Outlet /> {/* Outlet is used to render the matched child route */}

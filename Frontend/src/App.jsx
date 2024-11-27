@@ -26,7 +26,7 @@ function App() {
   const u = {name:'Deependra', job:'Study'}
   return (
     <div className="App">
-      <Navbar user={u}/> 
+      <Navbar/> 
       <Routes>
         <Route path="" element={<FirstPage />} /> 
         <Route path="/select-role" element={<RoleSelectionPage />} />
@@ -41,7 +41,7 @@ function App() {
         <Route path="/cart" element={<EventList />} />
         <Route path="/event-form" element={<EventForm />} />
         <Route path="/event-details" element={<EventDetails />} />
-        <Route path="/worker_dashboard" element={<WorkerDashboard workerId={u} />} />
+        <Route path="/worker_dashboard" element={<WorkerDashboard />} />
         <Route path="/user_dashboard" element={<UserDashboard></UserDashboard>} />
         {/* <Route path="/getworker" element={<GetWorker />} /> */}
       </Routes>

@@ -1,12 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import './EventDetails.css';
 
 const EventDetails = () => {
   const location = useLocation(); // Get the location object from React Router
   const { event } = location.state || {}; // Retrieve the event data passed from the card
+  const [authToken, setAuthToken] = useState('');
 
   const [notificationStatus, setNotificationStatus] = useState("");
+  
+
 
   if (!event) {
     return <div>Event not found.</div>; // If no event data is found, show an error message
@@ -14,6 +17,26 @@ const EventDetails = () => {
 
   // Handle the "Book Appointment" button click
   // Handle the "Book Appointment" button click
+
+
+  useEffect(() => {
+    const fetchAuthToken = async () => {
+        try {
+            const user = auth.currentUser;
+            if (user) {
+                const token = await user.getIdToken();
+                setAuthToken(token);
+            } else {
+                console.log("User not logged in");
+            }
+        } catch (error) {
+            const errorMessage = error.message.match(/\(([^)]+)\)/)[1];
+            console.error("Error fetching auth token:", errorMessage);
+        }
+    };
+
+    fetchAuthToken();
+}, []);
   const handleBookAppointment = () => {
     console.log("evebt", event)
     // Send a request to the backend (your Flask server) to trigger a Pusher event
@@ -21,6 +44,7 @@ const EventDetails = () => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${authToken}`, 
       },
       body: JSON.stringify({
         eventId: event.id,  // Assuming event has an 'id' field
