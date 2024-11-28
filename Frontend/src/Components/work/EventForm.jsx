@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { auth } from '../../firebase-config'; // Make sure this is the correct path to your Firebase configuration
 import "./EventForm.css";
 
 const EventForm = () => {
@@ -14,26 +15,27 @@ const EventForm = () => {
     });
 
     const [authToken, setAuthToken] = useState('');
+
     useEffect(() => {
-        const fetchAuthToken = async () => {
-            try {
-                const user = auth.currentUser;
-                if (user) {
+        const unsubscribe = auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                try {
                     const token = await user.getIdToken();
                     setAuthToken(token);
-                } else {
-                    console.log("User not logged in");
+                } catch (error) {
+                    console.error("Error fetching auth token:", error.message);
                 }
-            } catch (error) {
-                const errorMessage = error.message.match(/\(([^)]+)\)/)[1];
-                console.error("Error fetching auth token:", errorMessage);
+            } else {
+                console.log("User not logged in");
+                setAuthToken(''); // Clear token if user is logged out
             }
-        };
-    
-        fetchAuthToken();
+        });
+
+        // Cleanup the listener on component unmount
+        return () => unsubscribe();
     }, []);
 
-    const apiUrl = 'http://127.0.0.1:5000/add-listworker'; // Your Flask backend endpoint URL
+    const apiUrl = 'http://127.0.0.1:5000/add-work'; // Your Flask backend endpoint URL
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -46,11 +48,15 @@ const EventForm = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
 
+        if (!authToken) {
+            alert("You must be logged in to submit this form.");
+            return;
+        }
+
         fetch(apiUrl, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
-                ,
+                'Content-Type': 'application/json',
                 'Authorization': `Bearer ${authToken}`, 
             },
             body: JSON.stringify(formData)
@@ -152,7 +158,6 @@ const EventForm = () => {
                 </select>
             </label>
 
-            {/* Aadhaar Number Input */}
             <label>
                 Aadhaar Number:
                 <input
@@ -161,11 +166,10 @@ const EventForm = () => {
                     value={formData.aadhaarNumber}
                     onChange={handleChange}
                     required
-                    pattern="^[0-9]{12}$" // Ensuring it is a 12-digit number
+                    pattern="^[0-9]{12}$"
                     title="Aadhaar number should be a 12-digit number"
                 />
             </label>
-
 
             <button type="submit">Submit Event</button>
         </form>

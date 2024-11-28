@@ -32,16 +32,20 @@ pusher_client = pusher.Pusher(
 
 db = SQLAlchemy(app)
 
+
+
+
+
 # Define a model for Workers (assuming you have a workers table)
-class Worker_login(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+class Login(db.Model):  # Note: Capitalize class names by convention
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)  # Auto-increment ID
+    uid = db.Column(db.String(100), unique=True)  # Changed to unique instead of primary_key
     email = db.Column(db.String(120), unique=True, nullable=False)
     first_name = db.Column(db.String(100))
     last_name = db.Column(db.String(100))
-    # password = db.Column(db.String(80), nullable=False)
     
     
-class Worker(db.Model):
+class Worker_deatils(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(100), nullable=False)
     last_name = db.Column(db.String(100), nullable=False)
@@ -56,116 +60,119 @@ class Worker(db.Model):
     email = db.Column(db.String(120), nullable=False, unique=True)
     aadhaar_card_photo = db.Column(db.String(255), nullable=True)
     worker_photo = db.Column(db.String(255), nullable=True)
+    #worker_id = db.Column(db.String(100), nullable= False)
+    #status = db.Column(db.String(255), nullable=True)
     
-    completed_works = db.relationship('Work', foreign_keys='Work.worker_id', lazy='dynamic', backref='completed_by')
-    in_progress_works = db.relationship('Work', foreign_keys='Work.worker_id', lazy='dynamic', backref='in_progress_by')
-    awaiting_works = db.relationship('Work', foreign_keys='Work.worker_id', lazy='dynamic', backref='awaiting_by')
+    # completed_works = db.relationship('Work', foreign_keys='Work.worker_id', lazy='dynamic', backref='completed_by')
+    # in_progress_works = db.relationship('Work', foreign_keys='Work.worker_id', lazy='dynamic', backref='in_progress_by')
+    # awaiting_works = db.relationship('Work', foreign_keys='Work.worker_id', lazy='dynamic', backref='awaiting_by')
 
     def __repr__(self):
         return f'<Worker {self.first_name} {self.last_name}>'
 
 # Define a model for Work table
-class Work(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(100), nullable=False)
-    description = db.Column(db.String(255), nullable=False)
-    price = db.Column(db.String(50), nullable=False)
-    city = db.Column(db.String(100), nullable=False)
-    status = db.Column(db.String(20), nullable=False)  # status can be 'completed', 'in-progress', or 'awaiting'
-    start_time = db.Column(db.DateTime, nullable=False)
-    end_time = db.Column(db.DateTime, nullable=False)
-    worker_id = db.Column(db.Integer, db.ForeignKey('worker.id'), nullable=False)
+# class Work(db.Model):
+#     id = db.Column(db.Integer, primary_key=True)
+#     title = db.Column(db.String(100), nullable=False)
+#     description = db.Column(db.String(255), nullable=False)
+#     price = db.Column(db.String(50), nullable=False)
+#     city = db.Column(db.String(100), nullable=False)
+#     status = db.Column(db.String(20), nullable=False)  # status can be 'completed', 'in-progress', or 'awaiting'
+#     start_time = db.Column(db.DateTime, nullable=False)
+#     end_time = db.Column(db.DateTime, nullable=False)
+#     worker_id = db.Column(db.Integer, db.ForeignKey('worker.id'), nullable=False)
+#     status = db.Column(db.String(255), nullable=True)
 
-    def __repr__(self):
-        return f'<Work {self.title}>'
+#     def __repr__(self):
+#         return f'<Work {self.title}>'
 
 # Endpoint to get worker's works based on their status
-@app.route('/worker-works/<int:worker_id>', methods=['GET'])
-def get_worker_works(worker_id):
-    worker = Worker.query.get(worker_id)
-    if not worker:
-        return jsonify({'message': 'Worker not found'}), 404
+# @app.route('/worker-works/<int:worker_id>', methods=['GET'])
+# def get_worker_works(worker_id):
+#     worker = Worker.query.get(worker_id)
+#     if not worker:
+#         return jsonify({'message': 'Worker not found'}), 404
     
-    completed_works = [{
-        'id': work.id,
-        'title': work.title,
-        'description': work.description,
-        'price': work.price,
-        'city': work.city,
-        'start_time': work.start_time.strftime('%Y-%m-%d %H:%M:%S'),
-        'end_time': work.end_time.strftime('%Y-%m-%d %H:%M:%S'),
-        'status': work.status
-    } for work in worker.completed_works]
+#     completed_works = [{
+#         'id': work.id,
+#         'title': work.title,
+#         'description': work.description,
+#         'price': work.price,
+#         'city': work.city,
+#         'start_time': work.start_time.strftime('%Y-%m-%d %H:%M:%S'),
+#         'end_time': work.end_time.strftime('%Y-%m-%d %H:%M:%S'),
+#         'status': work.status
+#     } for work in worker.completed_works]
 
-    in_progress_works = [{
-        'id': work.id,
-        'title': work.title,
-        'description': work.description,
-        'price': work.price,
-        'city': work.city,
-        'start_time': work.start_time.strftime('%Y-%m-%d %H:%M:%S'),
-        'end_time': work.end_time.strftime('%Y-%m-%d %H:%M:%S'),
-        'status': work.status
-    } for work in worker.in_progress_works]
+#     in_progress_works = [{
+#         'id': work.id,
+#         'title': work.title,
+#         'description': work.description,
+#         'price': work.price,
+#         'city': work.city,
+#         'start_time': work.start_time.strftime('%Y-%m-%d %H:%M:%S'),
+#         'end_time': work.end_time.strftime('%Y-%m-%d %H:%M:%S'),
+#         'status': work.status
+#     } for work in worker.in_progress_works]
 
-    awaiting_works = [{
-        'id': work.id,
-        'title': work.title,
-        'description': work.description,
-        'price': work.price,
-        'city': work.city,
-        'start_time': work.start_time.strftime('%Y-%m-%d %H:%M:%S'),
-        'end_time': work.end_time.strftime('%Y-%m-%d %H:%M:%S'),
-        'status': work.status
-    } for work in worker.awaiting_works]
+#     awaiting_works = [{
+#         'id': work.id,
+#         'title': work.title,
+#         'description': work.description,
+#         'price': work.price,
+#         'city': work.city,
+#         'start_time': work.start_time.strftime('%Y-%m-%d %H:%M:%S'),
+#         'end_time': work.end_time.strftime('%Y-%m-%d %H:%M:%S'),
+#         'status': work.status
+#     } for work in worker.awaiting_works]
 
-    return jsonify({
-        'completed': completed_works,
-        'in_progress': in_progress_works,
-        'awaiting': awaiting_works
-    })
+#     return jsonify({
+#         'completed': completed_works,
+#         'in_progress': in_progress_works,
+#         'awaiting': awaiting_works
+#     })
 
 
 # Endpoint to add a new work
-@app.route('/add-work', methods=['POST'])
-def add_work():
-    data = request.get_json()
+# @app.route('/add-work', methods=['POST'])
+# def add_work():
+#     data = request.get_json()
 
-    # Extract and validate data
-    worker_id = data.get('worker_id')
-    title = data.get('title')
-    description = data.get('description')
-    price = data.get('price')
-    city = data.get('city')
-    status = data.get('status')  # This should be 'completed', 'in-progress', or 'awaiting'
-    start_time = datetime.strptime(data.get('start_time'), '%Y-%m-%dT%H:%M')
-    end_time = datetime.strptime(data.get('end_time'), '%Y-%m-%dT%H:%M')
+#     # Extract and validate data
+#     worker_id = data.get('worker_id')
+#     title = data.get('title')
+#     description = data.get('description')
+#     price = data.get('price')
+#     city = data.get('city')
+#     status = data.get('status')  # This should be 'completed', 'in-progress', or 'awaiting'
+#     start_time = datetime.strptime(data.get('start_time'), '%Y-%m-%dT%H:%M')
+#     end_time = datetime.strptime(data.get('end_time'), '%Y-%m-%dT%H:%M')
 
-    worker = Worker.query.get(worker_id)
-    if not worker:
-        return jsonify({'message': 'Worker not found'}), 404
+#     worker = Work.query.get(worker_id)
+#     if not worker:
+#         return jsonify({'message': 'Worker not found'}), 404
 
-    # Create new work entry
-    new_work = Work(
-        title=title,
-        description=description,
-        price=price,
-        city=city,
-        status=status,
-        start_time=start_time,
-        end_time=end_time,
-        worker_id=worker_id
-    )
+#     # Create new work entry
+#     new_work = Work(
+#         title=title,
+#         description=description,
+#         price=price,
+#         city=city,
+#         status=status,
+#         start_time=start_time,
+#         end_time=end_time,
+#         worker_id=worker_id
+#     )
 
-    db.session.add(new_work)
-    db.session.commit()
+#     db.session.add(new_work)
+#     db.session.commit()
 
-    return jsonify({'message': 'Work added successfully'}), 201
+#     return jsonify({'message': 'Work added successfully'}), 201
 
 
 ########################################### List Worker Table #########################################
 
-class list_worker(db.Model):
+class Work(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
     category = db.Column(
@@ -180,6 +187,7 @@ class list_worker(db.Model):
     start_time = db.Column(db.DateTime, nullable=False)
     end_time = db.Column(db.DateTime, nullable=False)
     aadhaar_number = db.Column(db.String(12), nullable=False)
+    #status = db.Column(db.String(255), nullable=True)
 
     __table_args__ = (
         db.CheckConstraint(
@@ -192,7 +200,7 @@ class list_worker(db.Model):
         return f'<ListWorker {self.title}>'
 
 # Adding a sample route for creating a ListWorker entry
-@app.route('/add-listworker', methods=['POST'])
+@app.route('/add-work', methods=['POST'])
 def add_listworker():
     decoded_token, error_response = verify_firebase_token()
     if error_response:
@@ -217,7 +225,7 @@ def add_listworker():
         return jsonify({'message': 'Invalid date format. Use "YYYY-MM-DDTHH:mm"'}), 400
 
     # Now create the new listworker object
-    new_listworker = list_worker(
+    new_listworker = Work(
         title=data.get('title'),
         category=data.get('category'),
         work_description=data.get('description'),
@@ -235,7 +243,7 @@ def add_listworker():
     return jsonify({'message': 'ListWorker added successfully'}), 201
 
 
-@app.route('/listworkers', methods=['GET'])
+@app.route('/listworks', methods=['GET'])
 def get_listworkers():
     # decoded_token, error_response = verify_firebase_token()
     # if error_response:
@@ -254,7 +262,7 @@ def get_listworkers():
 
     try:
         # Query the ListWorker table with the given city and category
-        listworkers = list_worker.query.filter_by(city=city, category=category).all()
+        listworkers = Work.query.filter_by(city=city, category=category).all()
 
         # Return results as JSON
         return jsonify([{
@@ -283,30 +291,33 @@ def get_listworkers():
 # @app.route('/', methods=['GET'])
 # def log():
 #     return {'result'}
+#oute to handle login
+@app.route('/login', methods=['POST'])
+def login():
+    decoded_token, error_response = verify_firebase_token()
+    if error_response:
+        return jsonify(error_response)
 
-# Route to handle login
-# @app.route('/login', methods=['POST'])
-# def login():
-#     data = request.get_json()
+    email = decoded_token.get('email')
+    #data = request.get_json()
+    return jsonify({'message': "login succesful"})
 
-#     # Extract email and password from the request body
-#     email = data.get('email')
-#     password = data.get('password')
+    # Extract email and password from the request body
+    #email = data.get('email')
+    #password = data.get('password')
 
-#     if not email or not password:
-#         return jsonify({'message': 'Email and password are required'}), 400
 
-#     # Check if the worker exists in the database
-#     worker = Worker_login.query.filter_by(email=email).first()
+    # Check if the worker exists in the database
+    #worker = Login.query.filter_by(email=email).first()
     
-#     print("worker", worker)
-#     if worker:
-#         if worker.password == password:
-#             return jsonify({'message': 'Login successful'}), 200
-#         else:
-#             return jsonify({'message': 'Invalid email or password'}), 401
-#     else:
-#         return jsonify({'message': 'Worker does not exist. Please register.'}), 404
+    #print("worker", worker)
+    # if worker:
+    #     if worker.password == password:
+    #         return jsonify({'message': 'Login successful'}), 200
+    #     else:
+    #         return jsonify({'message': 'Invalid email or password'}), 401
+    # else:
+    #     return jsonify({'message': 'Worker does not exist. Please register.'}), 404
 
     
 @app.route('/register', methods=['POST'])
@@ -316,22 +327,23 @@ def register():
     email = data.get('email')
     first_name = data.get('firstName')
     last_name = data.get('lastName')
+    uid=data.get("uid")
     
     # if not email or not password:
     #     return jsonify({'message': 'Email and password are required'}), 400
 
     # Check if the worker already exists
-    existing_worker = Worker_login.query.filter_by(email=email).first()
+    existing_worker = Login.query.filter_by(email=email).first()
     if existing_worker:
         
         return jsonify({'message': 'Worker already registered'}), 409
     # Create a new worker
-    new_worker = Worker_login(first_name=first_name, last_name = last_name, email=email)  # Hash the password in a real scenario
+    new_worker = Login(first_name=first_name, last_name = last_name, email=email, uid = uid)  # Hash the password in a real scenario
     db.session.add(new_worker)
     db.session.commit()
     return jsonify({'message': 'Worker registered successfully'}), 201
 
-@app.route('/register-worker', methods=['POST'])
+@app.route('/add-worker-deatils', methods=['POST'])
 def register_worker():
     data = request.json
     print(data)
@@ -346,7 +358,7 @@ def register_worker():
         worker_photo = None  # or set a default value
 
     # Create a new Worker object
-    new_worker = Worker(
+    new_worker = Worker_deatils(
         first_name=data.get('firstName'),
         last_name=data.get('lastName'),
         address=data.get('address'),
@@ -370,30 +382,30 @@ def register_worker():
 
 
 # Route to get all workers
-@app.route('/workers', methods=['GET'])
-def get_workers():
-    decoded_token, error_response = verify_firebase_token()
-    if error_response:
-        return jsonify(error_response)
+# @app.route('/get-workers-deatils', methods=['GET'])
+# def get_workers():
+#     decoded_token, error_response = verify_firebase_token()
+#     if error_response:
+#         return jsonify(error_response)
 
-    email = decoded_token.get('email')
-    workers = Worker.query.all()
-    return jsonify([{
-        'id': worker.id,
-        'first_name': worker.first_name,
-        'last_name': worker.last_name,
-        'address': worker.address,
-        'pincode': worker.pincode,
-        'occupation': worker.occupation,
-        'aadhaar_number': worker.aadhaar_number,
-        'experience': worker.experience,
-        'mobile': worker.mobile,
-        'dob': worker.dob.strftime('%Y-%m-%d'),
-        'age': worker.age,
-        'email': worker.email,
-        'aadhaar_card_photo': worker.aadhaar_card_photo,
-        'worker_photo': worker.worker_photo
-    } for worker in workers]), 200
+#     email = decoded_token.get('email')
+#     workers = Worker_deatils.query.all()
+#     return jsonify([{
+#         'id': worker.id,
+#         'first_name': worker.first_name,
+#         'last_name': worker.last_name,
+#         'address': worker.address,
+#         'pincode': worker.pincode,
+#         'occupation': worker.occupation,
+#         'aadhaar_number': worker.aadhaar_number,
+#         'experience': worker.experience,
+#         'mobile': worker.mobile,
+#         'dob': worker.dob.strftime('%Y-%m-%d'),
+#         'age': worker.age,
+#         'email': worker.email,
+#         'aadhaar_card_photo': worker.aadhaar_card_photo,
+#         'worker_photo': worker.worker_photo
+#     } for worker in workers]), 200
 
 @app.route('/book-appointment', methods=['POST'])
 def book_appointment():
@@ -401,7 +413,7 @@ def book_appointment():
     if error_response:
         return jsonify(error_response)
 
-    email = decoded_token.get('email')
+    # email = decoded_token.get('email')  # Extract email from the decoded Firebase token
     try:
         data = request.get_json()
 
@@ -411,20 +423,22 @@ def book_appointment():
         event_id = data['eventId']
         aadhaar_number = data['aadhaar_number']  # Make sure workerId is in the payload
         user_id = data['userId']
+        user_email = data['email']  # Get email from the request data
 
         if not aadhaar_number:
             raise ValueError("Worker ID is missing from request")
 
         # Generate a unique channel for the specific worker
-        worker_channel = f'worker-{aadhaar_number}-channel'
-
+        worker_channel = f'worker-{user_email}-channel'
+        print(worker_channel)
         # Send Pusher event to notify the specific worker
         pusher_client.trigger(
             worker_channel,  # Dynamic channel based on worker ID
             'new-appointment',  # Event name
             {
-                'eventId': event_id, 
-                'userId': user_id, 
+                'eventId': event_id,
+                'userId': user_id,
+                'userEmail': user_email,  # Send the email along with other data
                 'message': 'New appointment request!'
             }
         )
@@ -434,6 +448,7 @@ def book_appointment():
     except Exception as e:
         print(f"Error: {e}")
         return jsonify({'success': False, 'message': str(e)}), 500
+
 
 if __name__ == '__main__':
     with app.app_context():
