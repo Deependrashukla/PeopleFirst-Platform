@@ -1,38 +1,73 @@
 import React, { useEffect, useState } from "react";
+import Pusher from "pusher-js"; // Import Pusher library
+import { auth } from "../firebase-config"; // Import auth from Firebase or your auth provider
 import "./worker_dashboard.css"; // Updated CSS for styling
 
 const WorkerDashboard = () => {
   const [workerData, setWorkerData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [authToken, setAuthToken] =  useState('');
+  const [authToken, setAuthToken] = useState('');
+  const [workerId, setWorkerId] = useState('');
+  const [pusherChannel, setPusherChannel] = useState(null);
 
+  // Set up authentication state change listener
   useEffect(() => {
-    const fetchAuthToken = async () => {
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
+      if (user) {
         try {
-            const user = auth.currentUser;
-            if (user) {
-                const token = await user.getIdToken();
-                setAuthToken(token);
-            } else {
-                console.log("User not logged in");
-            }
+          const token = await user.getIdToken();
+          setAuthToken(token);
+
+          // After successful login, subscribe to the Pusher channel
+          const channel = new Pusher('be108580dd11495c66aa', {
+            cluster: 'ap2',
+            forceTLS: true,
+          }).subscribe(`worker-${user.email}-channel`); // Example: dynamic channel based on user email
+          
+          setPusherChannel(channel);
+
+          // Listen to events on the channel (for example, 'new-appointment')
+          const taskHandler = (data) => {
+            console.log('New task received:', data);
+            // Update workerData based on the new event if necessary
+            setWorkerData((prevData) => ({
+              ...prevData,
+              new_task: data,
+            }));
+          };
+          
+          channel.bind('new-appointment', taskHandler);
+
+          // Cleanup function to unsubscribe from the Pusher channel when the user logs out
+          return () => {
+            channel.unbind('new-appointment', taskHandler); // Unbind the event listener
+            pusherChannel?.unsubscribe(); // Unsubscribe from the channel if it's already set
+          };
+
         } catch (error) {
-            const errorMessage = error.message.match(/\(([^)]+)\)/)[1];
-            console.error("Error fetching auth token:", errorMessage);
+          console.error("Error fetching auth token:", error.message);
         }
-    };
+      } else {
+        // User is logged out, clean up
+        setAuthToken('');
+        if (pusherChannel) {
+          pusherChannel.unsubscribe(); // Unsubscribe from the Pusher channel
+        }
+        console.log("User logged out");
+      }
+    });
 
+    // Cleanup on component unmount
+    return () => unsubscribe();
 
+  }, [pusherChannel]); // Only subscribe/unsubscribe when the pusherChannel changes
 
-
-    fetchAuthToken();
-    }, []);
-
+  // Handle the worker data fetching based on workerId
   useEffect(() => {
     const fetchWorkerWorks = async () => {
       try {
-        const data = workerId; // Replace with API call if required
+        const data = workerId; // Replace with actual API call if required
         if (data) {
           setWorkerData(data);
         } else {
@@ -64,7 +99,7 @@ const WorkerDashboard = () => {
         <div className="dashboard-section">
           <h2 className="section-title green">Completed Works</h2>
           <div className="job-cards">
-            {workerData.completed_works && workerData.completed_works.length > 0 ? (
+            {workerData?.completed_works?.length > 0 ? (
               workerData.completed_works.map((work, index) => (
                 <div className="job-card green-bg" key={index}>
                   <div>{work.title}</div>
@@ -82,7 +117,7 @@ const WorkerDashboard = () => {
         <div className="dashboard-section">
           <h2 className="section-title orange">In-Progress Works</h2>
           <div className="job-cards">
-            {workerData.in_progress_works && workerData.in_progress_works.length > 0 ? (
+            {workerData?.in_progress_works?.length > 0 ? (
               workerData.in_progress_works.map((work, index) => (
                 <div className="job-card orange-bg" key={index}>
                   <div>{work.title}</div>
@@ -100,7 +135,7 @@ const WorkerDashboard = () => {
         <div className="dashboard-section">
           <h2 className="section-title grey">Awaiting Works</h2>
           <div className="job-cards">
-            {workerData.awaiting_works && workerData.awaiting_works.length > 0 ? (
+            {workerData?.awaiting_works?.length > 0 ? (
               workerData.awaiting_works.map((work, index) => (
                 <div className="job-card grey-bg" key={index}>
                   <div>{work.title}</div>

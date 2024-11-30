@@ -1,10 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Worker.css';
 
 const WorkerLoginForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
+  const [authToken, setAuthToken] = useState('');
+
+
+  useEffect(() => {
+    const fetchAuthToken = async () => {
+        try {
+            const user = auth.currentUser;
+            if (user) {
+                const token = await user.getIdToken();
+                setAuthToken(token);
+            } else {
+                console.log("User not logged in");
+            }
+        } catch (error) {
+            const errorMessage = error.message.match(/\(([^)]+)\)/)[1];
+            console.error("Error fetching auth token:", errorMessage);
+        }
+    };
+
+    fetchAuthToken();
+}, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -16,6 +37,7 @@ const WorkerLoginForm = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`, 
         },
         body: JSON.stringify(workerData),
       });

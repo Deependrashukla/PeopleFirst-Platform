@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import './EventList.css';
+import { onAuthStateChanged } from 'firebase/auth'; // Import onAuthStateChanged
+import { auth } from '../../firebase-config'; // Ensure this points to your Firebase configuration
 
 const EventList = () => {
   const [events, setEvents] = useState([]);
@@ -8,32 +10,37 @@ const EventList = () => {
   const [category, setCategory] = useState('');
   const [authToken, setAuthToken] = useState('');
 
+  // Set up auth state change listener
   useEffect(() => {
-    const fetchAuthToken = async () => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
         try {
-            const user = auth.currentUser;
-            if (user) {
-                const token = await user.getIdToken();
-                setAuthToken(token);
-            } else {
-                console.log("User not logged in");
-            }
+          const token = await user.getIdToken();
+          setAuthToken(token);
         } catch (error) {
-            const errorMessage = error.message.match(/\(([^)]+)\)/)[1];
-            console.error("Error fetching auth token:", errorMessage);
+          console.error("Error fetching auth token:", error.message);
         }
-    };
+      } else {
+        console.log("User not logged in");
+        setAuthToken(''); // Clear token when user logs out
+      }
+    });
 
-    fetchAuthToken();
-}, []);
-  
-  const apiUrl = 'http://127.0.0.1:5000/listworkers'; // Replace with your Flask backend endpoint URL
+    // Clean up the listener on component unmount
+    return () => unsubscribe();
+  }, []);
+
+  const apiUrl = 'http://127.0.0.1:5000/listworks'; // Replace with your Flask backend endpoint URL
 
   const fetchData = () => {
     const query = new URLSearchParams({ city, category }).toString();
     const url = `${apiUrl}?${query}`;
   
-    fetch(url)
+    fetch(url, {
+      headers: {
+        'Authorization': `Bearer ${authToken}` // Pass the auth token
+      }
+    })
       .then(response => {
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
@@ -54,12 +61,12 @@ const EventList = () => {
         setEvents([]); // Reset events to an empty array on error
       });
   };
-  
+
   useEffect(() => {
     if (city && category) {
       fetchData();
     }
-  }, [city, category]);
+  }, [city, category, authToken]); // Re-fetch when authToken updates
 
   return (
     <div className="event-list">
