@@ -4,3 +4,5 @@ Flask-Cors
 psycopg2
 flask_sqlalchemy
 pusher
+razorpay
+firebase_admin
