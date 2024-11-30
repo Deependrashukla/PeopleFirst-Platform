@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, Outlet } from 'react-router-dom'; // Import Link and Outlet
-import Profile from './profile'; // Import Profile component
+import Profile from './worker_profile'; // Import Profile component
 import './Navbar.css'; // Import the CSS file for styling
 
 const Navbar = () => {

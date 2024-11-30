@@ -27,8 +27,13 @@ const RazorpayPayment = () => {
         console.log('Payment Successful', response);
       },
       prefill: {
+<<<<<<< HEAD
         name: 'Sonal Gupta',
         email: 'sonal@gupta.com',
+=======
+        name: 'Customer Name',
+        email: 'customer@example.com',
+>>>>>>> ddec41d210d8571812a9950e97c3bd703026aa87
         contact: '1234567890',
       },
       theme: {
@@ -43,9 +48,15 @@ const RazorpayPayment = () => {
 
   return (
     <div>
+<<<<<<< HEAD
       {/* <button onClick={handlePayment} disabled={loading}>
         {loading ? 'Processing Payment...' : 'Pay with Razorpay'}
       </button> */}
+=======
+      <button onClick={handlePayment} disabled={loading}>
+        {loading ? 'Processing Payment...' : 'Pay with Razorpay'}
+      </button>
+>>>>>>> ddec41d210d8571812a9950e97c3bd703026aa87
     </div>
   );
 };
