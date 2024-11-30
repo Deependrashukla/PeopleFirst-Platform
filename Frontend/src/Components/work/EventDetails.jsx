@@ -18,28 +18,34 @@ const EventDetails = () => {
   }
 
   useEffect(() => {
+    let channel = null; // Local variable to hold channel
+
+    // Cache Aadhaar number when the page loads
+    if (event?.aadhaar_number) {
+      localStorage.setItem('aadhaar_number', event.aadhaar_number);
+      console.log('Aadhaar number cached:', event.aadhaar_number);
+    }
+
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
       if (user) {
         try {
           const token = await user.getIdToken();
           setAuthToken(token);
-          setUserId(user.uid); // Get userId from auth user
-          setUserEmail(user.email); // Get email from auth user
+          setUserId(user.uid);
+          setUserEmail(user.email);
 
-          // Set up Pusher channel and subscribe to it
-          const channel = new Pusher('be108580dd11495c66aa', {
-            cluster: 'ap2',
-            forceTLS: true,
-          }).subscribe(`worker-${user.email}-channel`); // Dynamic channel based on user email
-          
-          setPusherChannel(channel);
+          if (!channel) {
+            const pusher = new Pusher('b472bc7e618991d3b479', {
+              cluster: 'ap2',
+              forceTLS: true,
+            });
+            channel = pusher.subscribe(`worker-${event.aadhaar_number}-channel`);
+            setPusherChannel(channel);
 
-          // Listen to events on the channel (example: 'new-appointment')
-          channel.bind('new-appointment', function(data) {
-            console.log('New appointment received:', data);
-            // Handle the received data if needed
-          });
-
+            channel.bind('new-appointment', (data) => {
+              console.log('New appointment received:', data);
+            });
+          }
         } catch (error) {
           console.error('Error fetching auth token:', error.message);
         }
@@ -51,15 +57,14 @@ const EventDetails = () => {
       }
     });
 
-    // Cleanup the subscription and Pusher channel on component unmount
     return () => {
-      if (pusherChannel) {
-        pusherChannel.unsubscribe(); // Unsubscribe from the Pusher channel
+      if (channel) {
+        channel.unsubscribe();
         console.log('Unsubscribed from Pusher channel');
       }
-      unsubscribe(); // Cleanup Firebase auth listener
+      unsubscribe();
     };
-  }, [pusherChannel]);
+  }, [event]);
 
   const handleBookAppointment = () => {
     fetch('http://127.0.0.1:5000/book-appointment', {

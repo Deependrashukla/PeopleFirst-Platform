@@ -19,6 +19,8 @@ import EventForm from './Components/work/EventForm';
 import EventDetails from './Components/work/EventDetails';
 import WorkerDashboard from './Components/worker_dashboard';
 import UserDashboard from './Components/user_dashboard';
+import RazorpayPayment from './Components/razor';
+import DummyPaymentPage from './Components/DummyPaymentPage';
 
 
 function App() {
@@ -43,9 +45,12 @@ function App() {
         <Route path="/event-details" element={<EventDetails />} />
         <Route path="/worker_dashboard" element={<WorkerDashboard />} />
         <Route path="/user_dashboard" element={<UserDashboard></UserDashboard>} />
-        {/* <Route path="/getworker" element={<GetWorker />} /> */}
+        <Route path="/payment" element={<RazorpayPayment />} />
+
       </Routes>
       {location.pathname === '/' && <Footer />}
+      <DummyPaymentPage />;
+
     </div>
   );
 }

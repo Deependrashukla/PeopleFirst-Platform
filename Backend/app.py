@@ -23,9 +23,9 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 
 pusher_client = pusher.Pusher(
-    app_id='1902004',
-    key='be108580dd11495c66aa',
-    secret='be987806344c4329b0bc',
+    app_id='1844084',
+    key='b472bc7e618991d3b479',
+    secret='8334db82088d20cfa941',
     cluster='ap2',
     ssl=True
 )
@@ -429,7 +429,7 @@ def book_appointment():
             raise ValueError("Worker ID is missing from request")
 
         # Generate a unique channel for the specific worker
-        worker_channel = f'worker-{user_email}-channel'
+        worker_channel = f'worker-{aadhaar_number}-channel'
         print(worker_channel)
         # Send Pusher event to notify the specific worker
         pusher_client.trigger(
@@ -439,6 +439,7 @@ def book_appointment():
                 'eventId': event_id,
                 'userId': user_id,
                 'userEmail': user_email,  # Send the email along with other data
+                'adharNumber': aadhaar_number,
                 'message': 'New appointment request!'
             }
         )
@@ -449,6 +450,57 @@ def book_appointment():
         print(f"Error: {e}")
         return jsonify({'success': False, 'message': str(e)}), 500
 
+
+import razorpay
+
+razorpay_client = razorpay.Client(auth=("rzp_test_jrhUMjijQQywXQ", "vAWsD9TOjoc9SAWbVQ3jUJjX"))
+
+@app.route('/create-order', methods=['POST'])
+def create_order():
+    data = request.get_json()
+    amount = data.get('amount')  
+
+    order = razorpay_client.order.create({
+        'amount': amount,
+        'currency': 'INR',
+        'payment_capture': '1',  
+    })
+
+    order_id = order['id']
+
+    return jsonify({
+        'order_id': order_id,
+        'razorpay_key': 'vAWsD9TOjoc9SAWbVQ3jUJjX'})
+
+
+@app.route('/verify-payment', methods=['POST'])
+def verify_payment():
+    data = request.get_json()
+    payment_id = data.get('payment_id')
+    order_id = data.get('order_id')
+    signature = data.get('razorpay_signature')
+
+    # Verify the payment signature using Razorpay's SDK
+    try:
+        razorpay_client.utility.verify_payment_signature({
+            'razorpay_order_id': order_id,
+            'razorpay_payment_id': payment_id,
+            'razorpay_signature': signature
+        })
+        # Payment is valid
+        return jsonify({'status': 'Payment successful'})
+    except razorpay.errors.SignatureVerificationError:
+        # Invalid payment signature
+        return jsonify({'status': 'Payment verification failed'}), 400
+    
+@app.route('/api/details/<aadhaar_number>', methods=['GET'])
+def details(aadhaar_number):
+    print(aadhaar_number)
+
+    # Log the received data
+    # print("Received data:", aadhaar_number)
+    # Query your aadhaar_numberbase or perform operations
+    return jsonify({'aadhaar_number': aadhaar_number})
 
 if __name__ == '__main__':
     with app.app_context():

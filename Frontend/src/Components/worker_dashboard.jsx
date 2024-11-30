@@ -20,11 +20,13 @@ const WorkerDashboard = () => {
           setAuthToken(token);
 
           // After successful login, subscribe to the Pusher channel
-          const channel = new Pusher('be108580dd11495c66aa', {
+          const channel = new Pusher('b472bc7e618991d3b479', {
             cluster: 'ap2',
             forceTLS: true,
+            disableStats: true, // Optional: to reduce bandwidth usage
+            enabledTransports: ['ws', 'wss', 'xhr_polling', 'xhr_streaming'],
           }).subscribe(`worker-${user.email}-channel`); // Example: dynamic channel based on user email
-          
+
           setPusherChannel(channel);
 
           // Listen to events on the channel (for example, 'new-appointment')
@@ -36,7 +38,7 @@ const WorkerDashboard = () => {
               new_task: data,
             }));
           };
-          
+
           channel.bind('new-appointment', taskHandler);
 
           // Cleanup function to unsubscribe from the Pusher channel when the user logs out
