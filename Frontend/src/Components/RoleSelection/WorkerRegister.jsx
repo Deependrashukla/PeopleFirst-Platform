@@ -2,6 +2,21 @@ import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import './WorkerRegister.css'; // Import the CSS file
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage"; // Import Firebase storage utilities
+import { auth, storage } from '../../firebase-config';
+
+// Function to upload a file to Firebase Storage
+const uploadFile = async (file, path) => {
+  if (!file) return null;
+  try {
+    const storageRef = ref(storage, path);
+    const snapshot = await uploadBytes(storageRef, file);
+    return await getDownloadURL(snapshot.ref); // Get the public download URL
+  } catch (error) {
+    console.error("Error uploading file:", error);
+    return null;
+  }
+};
 
 const RegisterWorker = () => {
   const [age, setAge] = useState(0);
@@ -15,37 +30,39 @@ const RegisterWorker = () => {
     formState: { errors },
   } = useForm();
 
+  const dob = watch('dob');  // Watch dob value for changes
+
   const onSubmit = (data) => {
+
+    const updatedData = { ...data, age };
+
     if (age < 18) {
       alert("Worker must be at least 18 years old.");
       return;
     }
   
-    console.log(data);
+    console.log(updatedData);
 
     fetch('http://127.0.0.1:5000/register-worker', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify(updatedData),
     })
     .then(response => response.json())
-    .then(data => {
-      console.log('Success:', data);
+    .then(updatedData => {
+      console.log('Success:', updatedData);
       alert("Registration successful! Data ready to be sent to the API.");
-      navigate("/services")
+      navigate("/services");
     })
     .catch((error) => {
       console.error('Error:', error);
       alert("Registration unsuccessful!");
     });
-
-    
   };
 
-  const dob = watch('dob');
-  
+  // Function to calculate age from dob
   const calculateAge = (dob) => {
     if (dob) {
       const birthDate = new Date(dob);
@@ -61,9 +78,14 @@ const RegisterWorker = () => {
     return 0;
   };
 
+
+  
+
   useEffect(() => {
-    const calculatedAge = calculateAge(dob);
-    setAge(calculatedAge);
+    // Recalculate age whenever dob changes
+    const calculatedAge1 = calculateAge(dob);
+    console.log("AGE:", calculatedAge1);
+    setAge(calculatedAge1);
   }, [dob]);
 
   const nextStep = () => setStep((prev) => prev + 1);
@@ -127,22 +149,45 @@ const RegisterWorker = () => {
           </>
         )}
 
-        {/* Step 4: Additional Information */}
-        {step === 4 && (
-          <>
-            <div>
-              <label>Aadhaar Card Photo</label>
-              <input type="file" {...register('aadhaarCardPhoto', { required: true })} />
-              {errors.aadhaarCardPhoto && <p>Aadhaar card photo is required</p>}
-            </div>
-            <div>
-              <label>Worker's Photo</label>
-              <input type="file" {...register('workerPhoto', { required: true })} />
-              {errors.workerPhoto && <p>Worker's photo is required</p>}
-            </div>
-            <button type="button" onClick={prevStep}>Back</button>
-            <button type="button" onClick={nextStep}>Next</button>
-          </>
+    {step === 4 && (
+      <>
+        <div>
+          <label>Aadhaar Card Photo</label>
+          <input
+            type="file"
+            accept="image/*"
+            {...register("aadhaarCardPhoto", { required: true })}
+            onChange={async (e) => {
+              const file = e.target.files[0];
+              const path = `aadhaarPhotos/${Date.now()}_${file.name}`;
+              const url = await uploadFile(file, path);
+              if (url) console.log("Aadhaar Card Photo URL:", url); // Log URL for testing
+            }}
+          />
+          {errors.aadhaarCardPhoto && <p>Aadhaar card photo is required</p>}
+        </div>
+        <div>
+          <label>Worker's Photo</label>
+          <input
+            type="file"
+            accept="image/*"
+            {...register("workerPhoto", { required: true })}
+            onChange={async (e) => {
+              const file = e.target.files[0];
+              const path = `workerPhotos/${Date.now()}_${file.name}`;
+              const url = await uploadFile(file, path);
+              if (url) console.log("Worker's Photo URL:", url); // Log URL for testing
+            }}
+          />
+          {errors.workerPhoto && <p>Worker's photo is required</p>}
+        </div>
+        <button type="button" onClick={prevStep}>
+          Back
+        </button>
+        <button type="button" onClick={nextStep}>
+          Next
+        </button>
+        </>
         )}
 
         {/* Step 5: Contact and Personal Information */}

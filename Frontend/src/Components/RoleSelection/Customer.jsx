@@ -1,43 +1,35 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom'; // Import Link for navigation
-import "./Customer.css";
+import { useNavigate, Link } from 'react-router-dom';
+import { signInWithEmailAndPassword,setPersistence, browserLocalPersistence} from 'firebase/auth';
+import { auth } from '../../firebase-config';
+import './Customer.css';
 
 const LoginForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState(null); // State to store error messages
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const customerData = { email, password };
+  
+
 
     try {
-      const response = await fetch('http://127.0.0.1:5000/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(customerData),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        console.log('Login successful:', data);
-        navigate('/select-role'); // Redirect on successful login
-      } else {
-        const errorData = await response.json();
-        setError(errorData.message || 'Login failed'); // Set error message
-      }
+      await setPersistence(auth, browserLocalPersistence);
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      console.log('Login successful:', user);
+      navigate('/select-role'); // Redirect on successful login
     } catch (error) {
-      console.error('Error:', error);
-      setError('Something went wrong. Please try again.');
+      console.error('Error during login:', error);
+      setError(error.message || 'Login failed. Please try again.');
     }
   };
 
   return (
     <div className="login-form">
-      <h2>Customer Login</h2>
+      <h2> Login</h2>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label>Email:</label>
@@ -57,10 +49,8 @@ const LoginForm = () => {
             required
           />
         </div>
-        {error && <p className="error-message">{error}</p>} {/* Display error if any */}
+        {error && <p className="error-message">{error}</p>}
         <button type="submit">Login</button>
-
-        {/* Register link in blue color */}
         <p className="register-link">
           Don't have an account? <Link to="/register" style={{ color: 'blue' }}>Register</Link>
         </p>

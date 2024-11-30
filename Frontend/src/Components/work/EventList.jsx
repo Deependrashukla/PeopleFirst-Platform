@@ -1,24 +1,60 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import './EventList.css';
 
 const EventList = () => {
   const [events, setEvents] = useState([]);
   const [city, setCity] = useState('');
   const [category, setCategory] = useState('');
+  const [authToken, setAuthToken] = useState('');
+
+  useEffect(() => {
+    const fetchAuthToken = async () => {
+        try {
+            const user = auth.currentUser;
+            if (user) {
+                const token = await user.getIdToken();
+                setAuthToken(token);
+            } else {
+                console.log("User not logged in");
+            }
+        } catch (error) {
+            const errorMessage = error.message.match(/\(([^)]+)\)/)[1];
+            console.error("Error fetching auth token:", errorMessage);
+        }
+    };
+
+    fetchAuthToken();
+}, []);
   
   const apiUrl = 'http://127.0.0.1:5000/listworkers'; // Replace with your Flask backend endpoint URL
 
   const fetchData = () => {
-    // Construct the query URL with city and category parameters
     const query = new URLSearchParams({ city, category }).toString();
-    const url = `${apiUrl}?${query}`;  // Correct URL format with `?` to start query parameters
-    
+    const url = `${apiUrl}?${query}`;
+  
     fetch(url)
-      .then(response => response.json())
-      .then(data => setEvents(data || []))  // Assuming response is the list of events
-      .catch(error => console.error('Error fetching data:', error));
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log("Fetched Data:", data); // Debug API response
+        if (Array.isArray(data)) {
+          setEvents(data);
+        } else {
+          console.error("Unexpected data format, expected an array:", data);
+          setEvents([]);
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching data:', error);
+        setEvents([]); // Reset events to an empty array on error
+      });
   };
-
-  // Fetch data whenever city or category changes
+  
   useEffect(() => {
     if (city && category) {
       fetchData();
@@ -46,19 +82,21 @@ const EventList = () => {
         <button onClick={fetchData}>Search</button>
       </div>
 
-      {/* Displaying the event data */}
-      {events.map((event, index) => (
-        <div key={index} className="event-card">
-          <img src={event.imageUrl} alt={event.title} className="event-image" />
-          <h2>{event.title}</h2>
-          <p><strong>Category:</strong> {event.category}</p>
-          <p><strong>Place:</strong> {event.place}</p>
-          <p><strong>Start Time:</strong> {event.startTime}</p>
-          <p><strong>End Time:</strong> {event.endTime}</p>
-          <p><strong>Price Range:</strong> {event.priceRange}</p>
-          <p>{event.description}</p>
-        </div>
-      ))}
+      {/* Displaying the event data in card format */}
+      <div className="card-container">
+        {events.map((event, index) => (
+          <div key={index} className="event-card">
+            <img src={event.imageUrl} alt={event.title} className="event-image" />
+            <h2>{event.title}</h2>
+            <p><strong>Category:</strong> {event.category}</p>
+            <p><strong>Place:</strong> {event.city}</p>
+            <p><strong>Start Time:</strong> {event.start_time}</p>
+            
+            {/* Pass the entire event data as state to EventDetails */}
+            <Link to="/event-details" state={{ event }} className="view-details-btn">View Details</Link>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
