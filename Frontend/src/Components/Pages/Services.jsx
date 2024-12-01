@@ -1,8 +1,8 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 //import "./ServicesPage.css";
 
 const services = [
-  // { name: "Cleaner", icon: "🧹", discount: "₹50 OFF" },
   { name: "Maid", icon: "🧼", discount: "₹75 OFF" },
   { name: "Cook", icon: "🍳", discount: "₹100 OFF" },
   { name: "Plumber", icon: "🔧", discount: "₹50 OFF" },
@@ -10,12 +10,22 @@ const services = [
 ];
 
 const ServicesPage = () => {
+  const navigate = useNavigate();
+
+  const handleServiceClick = (category) => {
+    navigate("/cart", { state: { category } });
+  };
+
   return (
     <div className="services-page">
       <h1 className="page-title">Our Services</h1>
       <div className="services-grid">
         {services.map((service, index) => (
-          <div className="service-card" key={index}>
+          <div
+            className="service-card"
+            key={index}
+            onClick={() => handleServiceClick(service.name)} // Pass service name as category
+          >
             <div className="discount-badge">{service.discount}</div>
             <div className="service-icon">{service.icon}</div>
             <div className="service-name">{service.name}</div>
@@ -43,9 +53,6 @@ const ServicesPage = () => {
         </div>
       </div>
 
-
-
-
       {/* FAQs Section */}
       <div className="faqs-section">
         <h2>FAQs</h2>
@@ -69,7 +76,5 @@ const ServicesPage = () => {
     </div>
   );
 };
-
-
 
 export default ServicesPage;

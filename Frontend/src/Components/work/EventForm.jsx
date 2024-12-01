@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { auth } from '../../firebase-config'; // Make sure this is the correct path to your Firebase configuration
-import "./EventForm.css";
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import './EventForm.css';
 
 const EventForm = () => {
     const [formData, setFormData] = useState({
@@ -11,13 +11,16 @@ const EventForm = () => {
         endTime: '',
         priceRange: '',
         category: '',
-        aadhaarNumber: '' // Add aadhaarNumber to form state
+        aadhaarNumber: '',
     });
 
     const [authToken, setAuthToken] = useState('');
+    const [submitting, setSubmitting] = useState(false); // Track submission state
+
+    const auth = getAuth(); // Initialize Firebase Auth
 
     useEffect(() => {
-        const unsubscribe = auth.onAuthStateChanged(async (user) => {
+        const unsubscribe = onAuthStateChanged(auth, async (user) => {
             if (user) {
                 try {
                     const token = await user.getIdToken();
@@ -27,15 +30,14 @@ const EventForm = () => {
                 }
             } else {
                 console.log("User not logged in");
-                setAuthToken(''); // Clear token if user is logged out
+                setAuthToken('');
             }
         });
 
-        // Cleanup the listener on component unmount
         return () => unsubscribe();
-    }, []);
+    }, [auth]);
 
-    const apiUrl = 'http://127.0.0.1:5000/add-work'; // Your Flask backend endpoint URL
+    const apiUrl = 'http://127.0.0.1:5000/add-work';
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -45,7 +47,7 @@ const EventForm = () => {
         }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         if (!authToken) {
@@ -53,23 +55,44 @@ const EventForm = () => {
             return;
         }
 
-        fetch(apiUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${authToken}`, 
-            },
-            body: JSON.stringify(formData)
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.message === 'ListWorker added successfully') {
-                    alert('Event added successfully!');
-                } else {
-                    alert('Failed to add event.');
-                }
-            })
-            .catch(error => console.error('Error submitting data:', error));
+        setSubmitting(true); // Prevent multiple submissions
+
+        try {
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`,
+                },
+                body: JSON.stringify(formData),
+            });
+
+            if (!response.ok) {
+                throw new Error(`Error ${response.status}: ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            if (data.message === 'ListWorker added successfully') {
+                alert('Event added successfully!');
+                setFormData({
+                    title: '',
+                    description: '',
+                    place: '',
+                    startTime: '',
+                    endTime: '',
+                    priceRange: '',
+                    category: '',
+                    aadhaarNumber: '',
+                });
+            } else {
+                alert('Failed to add event. Please try again.');
+            }
+        } catch (error) {
+            console.error('Error submitting data:', error);
+            alert('An error occurred while submitting the form. Please try again later.');
+        } finally {
+            setSubmitting(false);
+        }
     };
 
     return (
@@ -171,7 +194,9 @@ const EventForm = () => {
                 />
             </label>
 
-            <button type="submit">Submit Event</button>
+            <button type="submit" disabled={submitting}>
+                {submitting ? 'Submitting...' : 'Submit Event'}
+            </button>
         </form>
     );
 };
