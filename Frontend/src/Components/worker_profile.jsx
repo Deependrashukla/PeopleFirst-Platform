@@ -1,27 +1,72 @@
 import React, { useState, useRef, useEffect } from 'react';
-import './Navbar.css'; // Ensure your CSS matches the desired style
+import './Navbar.css'; // Ensure you have a relevant CSS file
+import { auth } from '../firebase-config';
+import { signOut } from 'firebase/auth';
 
-const Profile = ({ user }) => {
+const Profile = () => {
+  const [userDetails, setUserDetails] = useState({ name: '', email: '' });
+  const [authToken, setAuthToken] = useState('');
   const [showDetails, setShowDetails] = useState(false);
   const profileRef = useRef(null);
 
-  // Fallback values to avoid undefined errors
-  const firstName = user?.firstName || 'User';
-  const lastName = user?.lastName || '';
-  const email = user?.email || 'Not provided';
 
-  // Toggle the profile details visibility
+  ////////////////////////////////////// kirtan 
+
+  
+
+    const handleLogout = async () => {
+      try {
+        await signOut(auth);
+        navigate('/select-role/worker', { replace: true });
+      } catch (error) {
+        // Safely extract error message
+        const match = error.message.match(/\(([^)]+)\)/);
+        const errorMessage = match ? match[1] : error.message;
+        console.error('Error during logout:', errorMessage);
+      }
+    };
+    
+  ////////////////////////////////////////////////////// Kirtan
+
+
+
+  // Listen for auth state changes
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
+      if (user) {
+        // Fetch token and user details when the user is logged in
+        console.log(user, "user")
+
+        const token = await user.getIdToken();
+        setAuthToken(token);
+        setUserDetails({
+          name: user.displayName || 'Guest User', // Fallback if displayName is null
+          email: user.email || 'No email found', // Fallback if email is null
+        });
+        console.log('User  logged in', userDetails);
+
+      } else {
+        console.log('User not logged in', userDetails);
+      }
+    });
+
+    return () => {
+      // Cleanup the listener when the component unmounts
+      unsubscribe();
+    };
+  }, []);
+
   const handleProfileClick = () => {
     setShowDetails(!showDetails);
   };
 
-  // Close the dropdown when clicking outside the profile
   useEffect(() => {
     const handleOutsideClick = (event) => {
       if (profileRef.current && !profileRef.current.contains(event.target)) {
         setShowDetails(false);
       }
     };
+
     document.addEventListener('mousedown', handleOutsideClick);
     return () => {
       document.removeEventListener('mousedown', handleOutsideClick);
@@ -30,39 +75,32 @@ const Profile = ({ user }) => {
 
   return (
     <div className="profile-container" ref={profileRef}>
-      {/* Profile Circle */}
       <div className="profile-circle" onClick={handleProfileClick}>
         <span className="profile-initials">
-          {firstName.charAt(0).toUpperCase()}
-          {lastName.charAt(0).toUpperCase()}
+          {userDetails.name ? userDetails.name.charAt(0).toUpperCase() : '?'}
         </span>
       </div>
 
-      {/* Profile Dropdown */}
       {showDetails && (
         <div className="profile-dropdown">
-          <div className="profile-header">
-            <div className="profile-avatar">
-              <span className="profile-avatar-initials">
-                {firstName.charAt(0).toUpperCase()}
-              </span>
-            </div>
-            <p className="profile-name">
-              {firstName} {lastName}
-            </p>
-            <p className="profile-email">{email}</p>
-          </div>
+          <p className="profile-name">{userDetails.name}</p>
+          <p className="profile-email">{userDetails.email}</p>
+          <hr />
           <ul className="profile-actions">
             <li>
-              <button onClick={() => console.log('Manage Google Account')}>
-                Manage Google Account
-              </button>
+              <button onClick={() => console.log('View Profile')}>View Profile</button>
             </li>
             <li>
               <button onClick={() => console.log('Settings')}>Settings</button>
             </li>
             <li>
-              <button onClick={() => console.log('Logout')}>Logout</button>
+              <button
+                onClick={() => {
+                  handleLogout()
+                }}
+              >
+                Logout
+              </button>
             </li>
           </ul>
         </div>

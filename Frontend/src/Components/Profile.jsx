@@ -1,12 +1,47 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './Navbar.css'; // Ensure you have a relevant CSS file
 import { auth } from '../firebase-config';
+import { signOut } from 'firebase/auth';
 
 const Profile = () => {
   const [userDetails, setUserDetails] = useState({ name: '', email: '' });
   const [authToken, setAuthToken] = useState('');
   const [showDetails, setShowDetails] = useState(false);
   const profileRef = useRef(null);
+
+
+  ////////////////////////////////////// kirtan 
+
+  const handleGetStarted = () => {
+    onAuthStateChanged(auth, (user) => {
+      console.log('user: ', user);
+      if (user) {
+        if (user.emailVerified) {
+          toast.success("Taking you in!");
+          navigate("/feed");
+        } else {
+          toast.info("Please verify your email!");
+          navigate("/signin");
+        }
+      } else {
+        toast.info("PLease create an account");
+        navigate("/signup");
+      }
+    })};
+
+    const handleLogout = async () => {
+      try {
+          await signOut(auth);
+          navigate('/signin', { replace: true });
+      } catch (error) {
+          const errorMessage = error.message.match(/\(([^)]+)\)/)[1];
+          console.error('Error during logout:', errorMessage);
+
+      }
+  }
+  ////////////////////////////////////////////////////// Kirtan
+
+
 
   // Listen for auth state changes
   useEffect(() => {
@@ -20,8 +55,10 @@ const Profile = () => {
           name: user.displayName || 'Guest User', // Fallback if displayName is null
           email: user.email || 'No email found', // Fallback if email is null
         });
+        console.log('User  logged in', userDetails);
+
       } else {
-        console.log('User not logged in');
+        console.log('User not logged in', userDetails);
       }
     });
 
@@ -71,8 +108,7 @@ const Profile = () => {
             <li>
               <button
                 onClick={() => {
-                  auth.signOut();
-                  console.log('Logged out');
+                  handleLogout()
                 }}
               >
                 Logout
