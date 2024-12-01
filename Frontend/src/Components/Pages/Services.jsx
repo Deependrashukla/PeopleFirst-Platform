@@ -2,7 +2,7 @@ import React from "react";
 //import "./ServicesPage.css";
 
 const services = [
-  { name: "Cleaner", icon: "🧹", discount: "₹50 OFF" },
+  // { name: "Cleaner", icon: "🧹", discount: "₹50 OFF" },
   { name: "Maid", icon: "🧼", discount: "₹75 OFF" },
   { name: "Cook", icon: "🍳", discount: "₹100 OFF" },
   { name: "Plumber", icon: "🔧", discount: "₹50 OFF" },
