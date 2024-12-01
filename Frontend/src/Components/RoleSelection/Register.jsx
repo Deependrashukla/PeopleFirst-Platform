@@ -58,7 +58,7 @@ const Register = () => {
       setMessage('Registration successful! Please verify your email.');
 
       // Redirect to the select-role page after a delay
-      setTimeout(() => navigate('/select-role'), 5000);
+      setTimeout(() => navigate('/select-role/customer'), 5000);
     } catch (error) {
       // Handle Firebase and network errors
       console.error('Error during registration:', error);

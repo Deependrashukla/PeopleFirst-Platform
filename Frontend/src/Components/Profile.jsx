@@ -10,7 +10,7 @@ const Profile = () => {
   const profileRef = useRef(null);
 
 
-  ////////////////////////////////////// kirtan 
+  //////////////////
 
   const handleGetStarted = () => {
     onAuthStateChanged(auth, (user) => {

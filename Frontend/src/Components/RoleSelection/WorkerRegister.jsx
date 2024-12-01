@@ -34,7 +34,7 @@ const RegisterWorker = () => {
 
   const onSubmit = (data) => {
 
-    const updatedData = { ...data, age };
+    const updatedData = { ...data, age }; 
 
     if (age < 18) {
       alert("Worker must be at least 18 years old.");
@@ -54,7 +54,7 @@ const RegisterWorker = () => {
     .then(updatedData => {
       console.log('Success:', updatedData);
       alert("Registration successful! Data ready to be sent to the API.");
-      navigate("/services");
+      navigate("/event-form");
     })
     .catch((error) => {
       console.error('Error:', error);
