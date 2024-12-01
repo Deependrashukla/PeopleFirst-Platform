@@ -49,7 +49,7 @@ function App() {
 
       </Routes>
       {location.pathname === '/' && <Footer />}
-      <DummyPaymentPage />;
+      {location.pathname === '/payment' && <DummyPaymentPage />}
 
     </div>
   );

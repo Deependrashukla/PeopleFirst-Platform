@@ -1,63 +1,659 @@
-/* src/FirstPage.css */
-.first-page-container {
-    text-align: center;
-    padding: 20px;
-    font-family: Arial, sans-serif;
-  }
-  
-  .hero-section {
-    background-color: #f5f5f5;
-    padding: 60px 20px;
-    border-bottom: 1px solid #ddd;
-  }
-  
-  .hero-section h1 {
-    font-size: 3em;
-    margin-bottom: 20px;
-    color: #333;
-  }
-  
-  .hero-section p {
-    font-size: 1.5em;
-    color: #666;
-  }
-  
-  .slideshow-image {
-    width: 80%;
-    max-width: 600px;
-    height: auto;
-    margin: 20px auto;
-    display: block;
-    border-radius: 10px;
-    transition: opacity 0.5s ease-in-out;
-  }
-  
-  .cta-button {
-    background-color: #ff6f61;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    font-size: 1.2em;
-    cursor: pointer;
-    margin-top: 20px;
-  }
-  
-  .cta-button:hover {
-    background-color: #e65a50;
-  }
-  
-  .intro-section {
-    margin-top: 40px;
-  }
-  
-  .intro-section h2 {
-    font-size: 2em;
-    margin-bottom: 15px;
-    color: #333;
-  }
-  
-  .intro-section p {
-    font-size: 1.2em;
-    color: #555;
-  }
-  
+/* General styling for the services page */
+.services-page {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+  background-color: #f8f9fa; /* Light gray background */
+}
+
+.page-title {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+/* Grid layout for the services */
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+  justify-items: center;
+  padding: 10px;
+}
+
+/* Individual service card styling */
+.service-card {
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 15px;
+  width: 200px;
+  text-align: center;
+  position: relative;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.service-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Discount badge */
+.discount-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background-color: #ff6f61;
+  color: white;
+  font-size: 0.8rem;
+  padding: 5px 10px;
+  border-radius: 50px;
+  font-weight: bold;
+}
+
+/* Icon styling */
+.service-icon {
+  font-size: 3rem;
+  margin: 20px 0;
+  color: #ffc107; /* Gold color */
+}
+
+/* Service name styling */
+.service-name {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #333;
+}
+
+
+/* General styling for the services page */
+.services-page {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+  background-color: #f8f9fa;
+}
+
+.page-title {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+/* Services grid layout */
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+  justify-items: center;
+  padding: 10px;
+}
+
+/* Service card styling */
+.service-card {
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 15px;
+  width: 200px;
+  text-align: center;
+  position: relative;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.service-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.discount-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background-color: #ff6f61;
+  color: white;
+  font-size: 0.8rem;
+  padding: 5px 10px;
+  border-radius: 50px;
+  font-weight: bold;
+}
+
+.service-icon {
+  font-size: 3rem;
+  margin: 20px 0;
+  color: #ffc107;
+}
+
+.service-name {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #333;
+}
+
+/* Promo section */
+.promo-section {
+  margin: 40px 0;
+  text-align: center;
+  background: #ffe9e5;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.promo-section h2 {
+  font-size: 1.8rem;
+  color: #ff6f61;
+}
+
+.promo-section p {
+  font-size: 1.2rem;
+  margin: 10px 0;
+  color: #555;
+}
+
+.promo-button {
+  background: #ff6f61;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.promo-button:hover {
+  background: #ff5747;
+}
+
+/* Testimonials section */
+.testimonials-section {
+  margin: 40px 0;
+  padding: 20px;
+}
+
+.testimonials-section h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.testimonials blockquote {
+  background: #f0f0f0;
+  border-left: 5px solid #ff6f61;
+  padding: 10px 20px;
+  margin: 10px 0;
+  font-style: italic;
+}
+
+/* FAQ section */
+.faqs-section {
+  margin: 40px 0;
+}
+
+.faqs-section h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.faq-item {
+  margin: 10px 0;
+}
+
+.faq-item h3 {
+  font-size: 1.2rem;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.faq-item p {
+  font-size: 1rem;
+  color: #555;
+}
+
+/* Footer section */
+.footer {
+  text-align: center;
+  margin-top: 40px;
+  padding: 10px 0;
+  background: #333;
+  color: white;
+}
+
+.footer a {
+  color: #ff6f61;
+  text-decoration: none;
+}
+
+.footer a:hover {
+  text-decoration: underline;
+}
+
+
+/* Header Styles */
+.header {
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  background-color: #004d40;
+  color: white;
+}
+
+.logo {
+  font-weight: bold;
+}
+
+.nav {
+  display: flex;
+  gap: 1rem;
+}
+
+
+/* Hero Section Styles */
+.hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2rem;
+  background-color: #e0f2f1;
+  height: 400px; /* Set a fixed height for equal alignment */
+  gap: 2rem; /* Space between text and image */
+}
+
+.heroContent {
+  flex: 1; /* Take up available space */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.heroTitle {
+  font-size: 2.5rem; /* Larger font for title */
+  font-weight: bold;
+  color: #004d40;
+  margin-bottom: 1rem;
+}
+
+.heroSubtitle {
+  font-size: 1.25rem; /* Slightly larger font for subtitle */
+  margin-bottom: 1.5rem;
+  color: #333;
+}
+
+.button {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  background-color: #004d40;
+  color: white;
+  border: none;
+  cursor: pointer;
+  margin-bottom: 1.5rem;
+}
+
+.partners {
+  display: flex;
+  gap: 1rem;
+  font-size: 1rem;
+  color: #555;
+}
+
+.partners span {
+  background-color: #fff;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Hero Image */
+.heroImage {
+  flex: 1; /* Take up the other half of the space */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.heroImage img {
+  width: 100%;
+  max-width: 300px; /* Set maximum width */
+  height: auto; /* Maintain aspect ratio */
+  border-radius: 10px; /* Optional: rounded corners */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for better appearance */
+}
+
+.navLink {
+  color: white;
+  text-decoration: none;
+}
+
+/* Hero Section Styles */
+.hero {
+  display: flex;
+  align-items: center;
+  padding: 2rem;
+  background-color: #e0f2f1;
+}
+
+.heroContent {
+  flex: 1;
+}
+
+.heroImage {
+  flex: 1;
+}
+
+.placeholderImage {
+  width: 300px;
+  height: auto;
+}
+
+.button {
+  padding: 0.5rem 1rem;
+  background-color: #004d40;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+/* Company Section Styles */
+.company {
+  text-align: center;
+  padding: 2rem;
+}
+
+.companyCards {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.card {
+  background: white;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 200px;
+}
+
+.cardImage {
+  width: 50px;
+  margin-bottom: 1rem;
+}
+
+/* Footer Styles */
+.footer {
+  background-color: #004d40;
+  color: white;
+  text-align: center;
+  padding: 1rem;
+  margin-top: 2rem;
+}
+
+.footerLinks {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.footerLink {
+  color: white;
+  text-decoration: none;
+}
+
+/* General Image Container Styles */
+.imageContainer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.imageContainer img {
+  width: 200px; /* Set a consistent width */
+  height: 200px; /* Set a consistent height */
+  object-fit: cover; /* Ensure images fit within the box */
+  border-radius: 8px; /* Optional: rounded corners for a modern look */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: subtle shadow */
+  transition: transform 0.3s ease; /* Optional: smooth hover effect */
+}
+
+.imageContainer img:hover {
+  transform: scale(1.05); /* Slight zoom effect on hover */
+}
+
+/* Specific Section Adjustments */
+.experts .imageContainer {
+  margin-top: 1rem;
+}
+
+.resources .guideImage {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+}
+
+/* Experts Section */
+.experts {
+  text-align: center;
+  padding: 2rem;
+  background-color: #f9f9f9; /* Light background color */
+  color: #333; /* Text color */
+}
+
+.experts h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: #0056b3; /* Primary color for heading */
+}
+
+.experts p {
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+  color: #555; /* Secondary text color */
+}
+
+.expertsNav {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.expertsNav span {
+  padding: 0.5rem 1rem;
+  border: 1px solid #0056b3;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.expertsNav span:hover {
+  background-color: #0056b3;
+  color: #fff;
+}
+
+.imageContainer {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap; /* Allows wrapping on smaller screens */
+}
+
+.imageContainer img {
+  width: 150px; /* Adjust based on your needs */
+  height: 150px;
+  border-radius: 10px;
+  object-fit: cover;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.imageContainer img:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Careers Section */
+.careers {
+  text-align: center;
+  padding: 2rem;
+  background-color: #eaf7ff; /* Light blue background */
+  color: #333;
+}
+
+.careers h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: #0056b3; /* Primary color for heading */
+}
+
+.careers p {
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
+  color: #555;
+}
+
+.careers .button {
+  padding: 0.8rem 2rem;
+  background-color: #0056b3;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.careers .button:hover {
+  background-color: #003f88;
+  transform: scale(1.05);
+}
+
+
+
+/* Resources Section */
+.resources {
+  text-align: center;
+  padding: 2rem;
+  background-color: #f9f9f9; /* Neutral background color */
+  color: #333;
+}
+
+.resources h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: #0056b3; /* Primary color for heading */
+}
+
+.resources p {
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
+  color: #555;
+}
+
+.resources .button {
+  padding: 0.8rem 2rem;
+  background-color: #0056b3;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.resources .button:hover {
+  background-color: #003f88;
+  transform: scale(1.05);
+}
+
+.resources .imageContainer {
+  margin-top: 2rem;
+}
+
+.resources .imageContainer img {
+  width: 300px; /* Adjust as needed */
+  border-radius: 10px;
+  object-fit: cover;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.resources .imageContainer img:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+
+
+/* Testimonials section styling */
+.testimonials-section {
+  margin: 40px 0;
+  padding: 20px;
+  background: #f0f8ff;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.testimonials-section h2 {
+  font-size: 1.8rem;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+/* Testimonials grid layout */
+.testimonials-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+  justify-items: center;
+}
+
+/* Individual testimonial card styling */
+.testimonial-card {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.testimonial-card:after {
+  content: "";
+  position: absolute;
+  bottom: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 15px 15px 0 15px;
+  border-color: #fff transparent transparent transparent;
+}
+
+/* Testimonial text content */
+.testimonial-content {
+  font-size: 1rem;
+  font-style: italic;
+  color: #555;
+  margin-bottom: 15px;
+}
+
+/* Author and star rating */
+.testimonial-author {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #333;
+}
+
+.testimonial-author span {
+  color: #ffd700; /* Gold stars */
+  margin-bottom: 5px;
+}
+
+.testimonial-author h4 {
+  margin: 0;
+  font-weight: bold;
+}
