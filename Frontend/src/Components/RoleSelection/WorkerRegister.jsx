@@ -45,7 +45,7 @@ const RegisterWorker = () => {
     console.log(updatedData);
 
     // Upload Aadhaar Card Photo and Worker Photo if not already uploaded
-    const aadhaarCardPhotoUrl = await uploadFile(data.aadhaarCardPhoto[0], `aadhaarPhotos/${Date.now()}_${data.aadhaarCardPhoto[0].name}`);
+    // const aadhaarCardPhotoUrl = await uploadFile(data.aadhaarCardPhoto[0], `aadhaarPhotos/${Date.now()}_${data.aadhaarCardPhoto[0].name}`);
 
     // Now, call the KYC verification endpoint
     const kycRequestData = {

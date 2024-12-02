@@ -36,7 +36,7 @@ const Register = () => {
       console.log('Email verification sent.');
 
       // Post registration details to the backend
-      const response = await fetch('http://127.0.0.1:5000/register', {
+      const response = await fetch('https://peoplefirst-platform.onrender.com/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -502,6 +502,8 @@ import razorpay
 razorpay_client = razorpay.Client(auth=("rzp_test_jrhUMjijQQywXQ", "vAWsD9TOjoc9SAWbVQ3jUJjX"))
 
 
+
+
 # @app.route('/create-order', methods=['POST'])
 # def create_order():
 #     data = request.get_json()
