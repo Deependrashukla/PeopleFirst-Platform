@@ -156,13 +156,6 @@ def process_documents():
     
     
 
-import os
-from dotenv import load_dotenv
-from config import Config
-
-load_dotenv()   
-app.config.from_object(Config)
-
 
 
 #for production it may happen to use these cmds: pip install gunicorn, to run program : gunicorn -w 4 -b 0.0.0.0:5001 app:app
