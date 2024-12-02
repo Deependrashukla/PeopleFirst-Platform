@@ -48,8 +48,9 @@ class DocumentProcessor:
         # Use the preprocessed image path for further processing
         processor_mapping = {
             1: aadhar_card.AadhaarCardProcessor(processed_image_path),
-            3: driving_license.LicenceCardProcessor(processed_image_path),
-            2: pan_card.PanCardProcessor(processed_image_path)
+            2: pan_card.PanCardProcessor(processed_image_path),
+            3: driving_license.LicenceCardProcessor(processed_image_path)
+            
         }
 
         if self.processor_id not in processor_mapping:

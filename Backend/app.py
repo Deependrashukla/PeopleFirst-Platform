@@ -6,6 +6,7 @@ import pusher
 import firebase_admin
 from firebase_admin import credentials, storage
 from firebase import verify_firebase_token
+import requests
 
 # Firebase Initialization
 # cred = credentials.Certificate(r"C:\Users\LENOVO\Downloads\peoplefirst-caba5-firebase-adminsdk-yhvto-516641ae4b.json")
@@ -630,6 +631,46 @@ def details(aadhaar_number):
     # print("Received data:", aadhaar_number)
     # Query your aadhaar_numberbase or perform operations
     return jsonify({'aadhaar_number': aadhaar_number})
+
+
+
+# Endpoint to forward the request to the KYC service and receive the response
+@app.route('/verify-kyc', methods=['POST'])
+def verify_kyc():
+   
+    try:
+        # Get data from request
+        data = request.get_json()
+        
+        # Prepare data for forwarding to the KYC app
+        kyc_data = {
+            "front_image_path": data.get('front_image_path'),
+            "back_image_path": data.get('back_image_path'),
+            "doc_insert_id": data.get('doc_insert_id'),
+            "nat_id": data.get('nat_id')
+        }
+
+        # Check if required fields are present
+        if not kyc_data["front_image_path"] and not kyc_data["back_image_path"]:
+            return jsonify({"error": "At least one image (front_image_path or back_image_path) is required"}), 400
+        
+        if not kyc_data["doc_insert_id"] or not kyc_data["nat_id"]:
+            return jsonify({"error": "doc_insert_id and nat_id are required"}), 400
+        
+        # Send the data to the KYC service (running on 127.0.0.1:5001)
+        kyc_service_url = 'http://127.0.0.1:5001/process_documents'
+        response = requests.post(kyc_service_url, json=kyc_data)
+        
+        if response.status_code == 200:
+            # Forward the response from the KYC service to the client
+            return jsonify(response.json()), 200
+        else:
+            # Handle any error response from the KYC service
+            return jsonify({"error": "Error processing KYC data", "details": response.json()}), response.status_code
+    
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 if __name__ == '__main__':
     with app.app_context():

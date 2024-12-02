@@ -153,6 +153,12 @@ def process_documents():
     
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+    
+
+
+
+#for production it may happen to use these cmds: pip install gunicorn, to run program : gunicorn -w 4 -b 0.0.0.0:5001 app:app
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5001, threaded=True)

@@ -8,3 +8,4 @@ streamlit
 # watchdog # ?required for running debugger
 flasgger
 requests
+gunicorn
