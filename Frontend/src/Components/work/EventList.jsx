@@ -30,7 +30,7 @@ const EventList = () => {
   }, []);
 
   const apiUrl = "http://127.0.0.1:5000/listwork";
-  const apiUrl = 'http://127.0.0.1:5000/listworkers'; // Replace with your Flask backend endpoint URL
+  // const apiUrl = 'http://127.0.0.1:5000/listworkers'; // Replace with your Flask backend endpoint URL
 
   const fetchData = () => {
     if (!authToken) {

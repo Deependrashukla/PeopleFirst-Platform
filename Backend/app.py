@@ -41,6 +41,7 @@ class User(db.Model):  # Note: Capitalize class names by convention
     email = db.Column(db.String(120), unique=True, nullable=False)
     first_name = db.Column(db.String(100))
     last_name = db.Column(db.String(100))
+    choice = db.Column(db.Boolean, nullable=True)
 
 # Worker Login Table
 # class WorkerLogin(db.Model):
@@ -119,6 +120,40 @@ class Appointment(db.Model):
         return f"<Appointment User {self.user_id}, Worker {self.worker_id}, Status {self.status}>"
 
 # ----------------------------- ROUTES -----------------------------
+@app.route('/add-choice', methods=['POST'])
+def add_choice():
+    data = request.get_json()
+    print("Received data:", data)  # Debugging log
+
+    # Validate payload
+    email = data.get('email')
+    choice = data.get('choice')
+    if not email or not choice:
+        return jsonify({'error': 'Email and choice are required'}), 400
+
+    # Find user
+    user = User.query.filter_by(email=email).first()
+    if not user:
+        return jsonify({'error': 'User not found'}), 404
+
+    # Update user's choice
+    user.choice = choice
+    db.session.commit()
+
+    return jsonify({'message': 'Choice updated successfully!'}), 200
+
+@app.route('/get-choice', methods=['POST'])
+def get_choice():
+    data = request.get_json()
+    email = data.get('email')
+    if not email:
+        return jsonify({'error': 'Email is required'}), 400
+
+    user = User.query.filter_by(email=email).first()
+    if not user:
+        return jsonify({'error': 'User not found'}), 404
+
+    return jsonify({'choice': user.choice}), 200
 
 
 @app.route('/listworkers', methods=['GET'])
@@ -356,8 +391,8 @@ def login():
         return jsonify(error_response)
 
     email = decoded_token.get('email')
-    #data = request.get_json()
-    return jsonify({'message': "login succesful"})
+    return jsonify({'message': "Login successful", 'email': email})
+
 
     # Extract email and password from the request body
     #email = data.get('email')
@@ -390,64 +425,64 @@ def register():
     #     return jsonify({'message': 'Email and password are required'}), 400
 
     # Check if the worker already exists
-    existing_worker = Login.query.filter_by(email=email).first()
+    existing_worker = User.query.filter_by(email=email).first()
     if existing_worker:
         
         return jsonify({'message': 'Worker already registered'}), 409
     # Create a new worker
-    new_worker = Login(first_name=first_name, last_name = last_name, email=email, uid = uid)  # Hash the password in a real scenario
+    new_worker = User(first_name=first_name, last_name = last_name, email=email, uid = uid)  # Hash the password in a real scenario
     db.session.add(new_worker)
     db.session.commit()
     return jsonify({'message': 'Worker registered successfully'}), 201
         
 
-@app.route('/listwork', methods=['GET'])
-def get_listworkers():
-    # decoded_token, error_response = verify_firebase_token()
-    # if error_response:
-    #     return jsonify(error_response)
+# @app.route('/listwork', methods=['GET'])
+# def get_listworkers():
+#     # decoded_token, error_response = verify_firebase_token()
+#     # if error_response:
+#     #     return jsonify(error_response)
 
-    # email = decoded_token.get('email')
-    city = request.args.get('city')
-    category = request.args.get('category')
-    # listworkers = Work.query.filter(
-    #     (Work.city == city if city else True),  # Filter by city if it's defined
-    #     Work.title == category  # Always filter by category
-    # ).all()
+#     # email = decoded_token.get('email')
+#     city = request.args.get('city')
+#     category = request.args.get('category')
+#     # listworkers = Work.query.filter(
+#     #     (Work.city == city if city else True),  # Filter by city if it's defined
+#     #     Work.title == category  # Always filter by category
+#     # ).all()
 
 
-    # Log the incoming query parameters for debugging
-    print(f"Received city: {city}, category: {category}")
+#     # Log the incoming query parameters for debugging
+#     print(f"Received city: {city}, category: {category}")
 
-    # Validate input
-    if not category:
-        return jsonify({'message': 'Category is required parameters'}), 400
+#     # Validate input
+#     if not category:
+#         return jsonify({'message': 'Category is required parameters'}), 400
 
-    try:
-        # Query the ListWorker table with the given city and category
-        listworkers = Work.query.filter(
-            (Work.city == city if city else True),  # Filter by city if it's defined
-            Work.title == category  # Always filter by category
-        ).all()
+#     try:
+#         # Query the ListWorker table with the given city and category
+#         listworkers = Work.query.filter(
+#             (Work.city == city if city else True),  # Filter by city if it's defined
+#             Work.title == category  # Always filter by category
+#         ).all()
         
-        print("listworker: ", listworkers)
-        # Return results as JSON
-        return jsonify([{
-            'id': listworker.id,
-            'title': listworker.title,
-            # 'work_description': listworker.description,
-            'price': listworker.price,
-            'city': listworker.city,
-            #'imageurl': listworker.imageurl,
-            'start_time': listworker.start_time.strftime('%Y-%m-%d %H:%M:%S'),
-            'end_time': listworker.end_time.strftime('%Y-%m-%d %H:%M:%S'),
-            #'aadhaar_number' : listworker.aadhaar_number
-        } for listworker in listworkers]), 200
+#         print("listworker: ", listworkers)
+#         # Return results as JSON
+#         return jsonify([{
+#             'id': listworker.id,
+#             'title': listworker.title,
+#             # 'work_description': listworker.description,
+#             'price': listworker.price,
+#             'city': listworker.city,
+#             #'imageurl': listworker.imageurl,
+#             'start_time': listworker.start_time.strftime('%Y-%m-%d %H:%M:%S'),
+#             'end_time': listworker.end_time.strftime('%Y-%m-%d %H:%M:%S'),
+#             #'aadhaar_number' : listworker.aadhaar_number
+#         } for listworker in listworkers]), 200
 
-    except Exception as e:
-        # Log and return a general error message if any issue occurs during the query
-        print(f"Error: {str(e)}")
-        return jsonify({'message': 'An error occurred while processing the request'}), 500
+#     except Exception as e:
+#         # Log and return a general error message if any issue occurs during the query
+#         print(f"Error: {str(e)}")
+#         return jsonify({'message': 'An error occurred while processing the request'}), 500
 
 @app.route('/list-appointments', methods=['GET'])
 def list_appointments():
