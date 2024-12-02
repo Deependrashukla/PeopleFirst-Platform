@@ -6,4 +6,5 @@ flask_sqlalchemy
 pusher
 razorpay
 firebase_admin
-dotenv
+python-dotenv
+
