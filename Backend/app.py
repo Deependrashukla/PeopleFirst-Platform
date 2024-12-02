@@ -120,6 +120,50 @@ class Appointment(db.Model):
 
 # ----------------------------- ROUTES -----------------------------
 
+
+@app.route('/listworkers', methods=['GET'])
+def get_listworkers():
+    print("deependra")
+    # decoded_token, error_response = verify_firebase_token()
+    # if error_response:
+    #     return jsonify(error_response)
+
+    # email = decoded_token.get('email')
+    city = request.args.get('city')
+    category = request.args.get('category')
+
+    # Log the incoming query parameters for debugging
+    print(f"Received city: {city}, category: {category}")
+
+    # Validate input
+    if not city or not category:
+        return jsonify({'message': 'City and category are required parameters'}), 400
+
+    try:
+        # Query the ListWorker table with the given city and category
+        listworkers = Work.query.filter_by(city=city, category=category).all()
+
+        # Return results as JSON
+        return jsonify([{
+            'id': listworker.id,
+            'title': listworker.title,
+            'category': listworker.category,
+            'work_description': listworker.work_description,
+            'price': listworker.price,
+            'city': listworker.city,
+            'imageurl': listworker.imageurl,
+            'start_time': listworker.start_time.strftime('%Y-%m-%d %H:%M:%S'),
+            'end_time': listworker.end_time.strftime('%Y-%m-%d %H:%M:%S'),
+            'aadhaar_number' : listworker.aadhaar_number
+        } for listworker in listworkers]), 200
+
+    except Exception as e:
+        # Log and return a general error message if any issue occurs during the query
+        print(f"Error: {str(e)}")
+        return jsonify({'message': 'An error occurred while processing the request'}), 500
+
+
+
 @app.route('/register-user', methods=['POST'])
 def register_user():
     data = request.get_json()
