@@ -8,7 +8,7 @@ from firebase_admin import credentials, storage
 from firebase import verify_firebase_token
 
 # Firebase Initialization
-cred = credentials.Certificate(r"C:\Users\LENOVO\Downloads\peoplefirst-caba5-firebase-adminsdk-yhvto-516641ae4b.json")
+cred = credentials.Certificate(r".\peoplefirst-caba5-firebase-adminsdk-yhvto-516641ae4b.json")
 firebase_admin.initialize_app(cred, {
     'storageBucket': 'padhai-abab6.appspot.com'
 })
@@ -493,4 +493,4 @@ def details(aadhaar_number):
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()  # Create tables if not already present
-    app.run(debug=True)
+    app.run(host='0.0.0.0', debug=True)
