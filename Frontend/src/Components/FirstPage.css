@@ -279,7 +279,7 @@
   color: #333;
 }
 
-.button{
+.button {
   padding: 0.75rem 1.5rem;
   font-size: 1rem;
   background-color: #004d40;
@@ -287,7 +287,6 @@
   border: none;
   cursor: pointer;
   margin-bottom: 1.5rem;
-  width: 10rem
 }
 
 .partners {
@@ -317,7 +316,7 @@
   max-width: 300px; /* Set maximum width */
   height: auto; /* Maintain aspect ratio */
   border-radius: 10px; /* Optional: rounded corners */
-  /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); Subtle shadow for better appearance */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for better appearance */
 }
 
 .navLink {

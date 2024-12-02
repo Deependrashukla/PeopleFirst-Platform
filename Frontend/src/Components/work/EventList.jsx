@@ -30,7 +30,6 @@ const EventList = () => {
   }, []);
 
   const apiUrl = "http://127.0.0.1:5000/listwork";
-  // const apiUrl = 'http://127.0.0.1:5000/listworkers'; // Replace with your Flask backend endpoint URL
 
   const fetchData = () => {
     if (!authToken) {
@@ -54,6 +53,7 @@ const EventList = () => {
       })
       .then((data) => {
         if (Array.isArray(data)) {
+          console.log("data:", data)
           setEvents(data);
         } else {
           console.error("Unexpected data format, expected an array:", data);

@@ -46,13 +46,13 @@ const LandingPage = () => {
           <button className="button" onClick={handleGetStarted}>
             Get Started Now
           </button>
-          {/* <div className="partners">
+          <div className="partners">
             <button className="button">Cook</button>
             <button className="button">Maid</button>
             <button className="button">Cleaner</button>
             <button className="button">Electrician</button>
             <button className="button">Plumber</button>
-          </div> */}
+          </div>
         </div>
         <div className="heroImage">
           <img src={heroImage} alt="Hero" />
@@ -63,13 +63,13 @@ const LandingPage = () => {
       <section className="experts">
         <h2>Our Experts</h2>
         <p>Meet the skilled professionals ready to assist you</p>
-        {/* <div className="expertsNav">
+        <div className="expertsNav">
           <span>Call Us</span>
           <span>Schedule</span>
           <span>Explore Services</span>
           <span>FAQ</span>
           <span>Learn More</span>
-        </div> */}
+        </div>
         <div className="imageContainer">
           <img src={workerImage} alt="Expert" />
           <img src={guideImage} alt="Guide" />

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import './WorkerRegister.css';
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage"; 
+import './WorkerRegister.css'; // Import the CSS file
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage"; // Import Firebase storage utilities
 import { auth, storage } from '../../firebase-config';
 
 // Function to upload a file to Firebase Storage
@@ -21,8 +21,6 @@ const uploadFile = async (file, path) => {
 const RegisterWorker = () => {
   const [age, setAge] = useState(0);
   const [step, setStep] = useState(1); // Step state to track pagination
-  const [aadhaarCardPhotoUrl, setAadhaarCardPhotoUrl] = useState('');
-  const [workerPhotoUrl, setWorkerPhotoUrl] = useState('');
   const navigate = useNavigate();
 
   const {
@@ -35,7 +33,7 @@ const RegisterWorker = () => {
   const dob = watch('dob');  // Watch dob value for changes
 
   const onSubmit = async (data) => {
-    const updatedData = { ...data, age };
+    const updatedData = { ...data, age }; 
 
     if (age < 18) {
       alert("Worker must be at least 18 years old.");
@@ -44,56 +42,21 @@ const RegisterWorker = () => {
 
     console.log(updatedData);
 
-    // Upload Aadhaar Card Photo and Worker Photo if not already uploaded
-    // const aadhaarCardPhotoUrl = await uploadFile(data.aadhaarCardPhoto[0], `aadhaarPhotos/${Date.now()}_${data.aadhaarCardPhoto[0].name}`);
-
-    // Now, call the KYC verification endpoint
-    const kycRequestData = {
-      front_image_path: aadhaarCardPhotoUrl,
-      back_image_path: aadhaarCardPhotoUrl,
-      doc_insert_id: 1, // or other unique doc_insert_id
-      nat_id: 91 // Or the actual national ID value
-    };
-
-    // Call the KYC verification API
     try {
-      const kycResponse = await fetch('http://127.0.0.1:5000/verify-kyc', {
+      const response = await fetch('http://127.0.0.1:5000/add-worker-deatils', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(kycRequestData),
+        body: JSON.stringify(updatedData),
       });
-
-      const kycData = await kycResponse.json();
-      console.log('KYC Verification Response:', kycData);
-
-      if (kycData.success) {
-        // If KYC verification is successful, proceed with registration
-        fetch('http://127.0.0.1:5000/add-worker-deatils', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(updatedData),
-        })
-          .then(response => response.json())
-          .then(updatedData => {
-            console.log('Success:', updatedData);
-            alert("Registration successful! Data ready to be sent to the API.");
-            navigate("/event-form");
-          })
-          .catch((error) => {
-            console.error('Error:', error);
-            alert("Registration unsuccessful!");
-          });
-      } else {
-        // Handle failed KYC verification
-        alert("KYC verification failed. Please try again.");
-      }
+      const result = await response.json();
+      console.log('Success:', result);
+      alert("Registration successful! Data ready to be sent to the API.");
+      navigate("/event-form");
     } catch (error) {
-      console.error('Error during KYC verification:', error);
-      alert("KYC verification failed. Please try again.");
+      console.error('Error:', error);
+      alert("Registration unsuccessful!");
     }
   };
 
@@ -115,9 +78,9 @@ const RegisterWorker = () => {
 
   useEffect(() => {
     // Recalculate age whenever dob changes
-    const calculatedAge1 = calculateAge(dob);
-    console.log("AGE:", calculatedAge1);
-    setAge(calculatedAge1);
+    const calculatedAge = calculateAge(dob);
+    console.log("AGE:", calculatedAge);
+    setAge(calculatedAge);
   }, [dob]);
 
   const nextStep = () => setStep((prev) => prev + 1);
@@ -194,8 +157,7 @@ const RegisterWorker = () => {
                   const file = e.target.files[0];
                   const path = `aadhaarPhotos/${Date.now()}_${file.name}`;
                   const url = await uploadFile(file, path);
-                  setAadhaarCardPhotoUrl(url);
-                  console.log("Aadhaar Card Photo URL:", url);
+                  if (url) console.log("Aadhaar Card Photo URL:", url); // Log URL for testing
                 }}
               />
               {errors.aadhaarCardPhoto && <p>Aadhaar card photo is required</p>}
@@ -210,8 +172,7 @@ const RegisterWorker = () => {
                   const file = e.target.files[0];
                   const path = `workerPhotos/${Date.now()}_${file.name}`;
                   const url = await uploadFile(file, path);
-                  setWorkerPhotoUrl(url);
-                  console.log("Worker's Photo URL:", url);
+                  if (url) console.log("Worker's Photo URL:", url); // Log URL for testing
                 }}
               />
               {errors.workerPhoto && <p>Worker's photo is required</p>}
