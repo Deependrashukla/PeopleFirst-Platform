@@ -6,10 +6,13 @@ import pusher
 import firebase_admin
 from firebase_admin import credentials, storage
 from firebase import verify_firebase_token
+from config import Config
+
+firebase_config = Config.FIREBASE_CREDENTIALS
 
 # Firebase Initialization
-cred = credentials.Certificate("./peoplefirst-caba5-firebase-adminsdk-yhvto-516641ae4b.json")
-firebase_admin.initialize_app(cred, {
+cred = credentials.Certificate(firebase_config)
+initialize_app(cred, {
     'storageBucket': 'padhai-abab6.appspot.com'
 })
 
