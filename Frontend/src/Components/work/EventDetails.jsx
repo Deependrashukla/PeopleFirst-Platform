@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import './EventDetails.css';
 import { auth } from '../../firebase-config'; // Ensure this points to your Firebase configuration
-import Pusher from 'pusher-js';
 
 const EventDetails = () => {
   const location = useLocation();
@@ -11,21 +10,12 @@ const EventDetails = () => {
   const [userId, setUserId] = useState('');
   const [userEmail, setUserEmail] = useState(''); // State for user's email
   const [notificationStatus, setNotificationStatus] = useState('');
-  const [pusherChannel, setPusherChannel] = useState(null);
 
   if (!event) {
     return <div>Event not found.</div>;
   }
 
   useEffect(() => {
-    let channel = null; // Local variable to hold channel
-
-    // Cache Aadhaar number when the page loads
-    if (event?.aadhaar_number) {
-      localStorage.setItem('aadhaar_number', event.aadhaar_number);
-      console.log('Aadhaar number cached:', event.aadhaar_number);
-    }
-
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
       if (user) {
         try {
@@ -33,24 +23,10 @@ const EventDetails = () => {
           setAuthToken(token);
           setUserId(user.uid);
           setUserEmail(user.email);
-
-          if (!channel) {
-            const pusher = new Pusher('b472bc7e618991d3b479', {
-              cluster: 'ap2',
-              forceTLS: true,
-            });
-            channel = pusher.subscribe(`worker-${event.aadhaar_number}-channel`);
-            setPusherChannel(channel);
-
-            channel.bind('new-appointment', (data) => {
-              console.log('New appointment received:', data);
-            });
-          }
         } catch (error) {
           console.error('Error fetching auth token:', error.message);
         }
       } else {
-        console.log('User not logged in');
         setAuthToken('');
         setUserId('');
         setUserEmail('');
@@ -58,26 +34,26 @@ const EventDetails = () => {
     });
 
     return () => {
-      if (channel) {
-        channel.unsubscribe();
-        console.log('Unsubscribed from Pusher channel');
-      }
       unsubscribe();
     };
-  }, [event]);
+  }, []);
 
   const handleBookAppointment = () => {
-    fetch('http://127.0.0.1:5000/book-appointment', {
+
+    console.log("event", event)
+    fetch('http://127.0.0.1:5000/post_appointment', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${authToken}`,
       },
       body: JSON.stringify({
-        eventId: event.id,
-        aadhaar_number: event.aadhaar_number,
-        userId: userId, // Dynamically set userId from auth user
-        email: userEmail, // Add email to the request
+        // aadhaar_number: event.aadhaar_number,
+        user_email : userEmail,
+        service_type: "cook",
+        appointment_time:event.start_time,
+        status:"Not completed",
+        worker_aadhar: event.aadhaar_number
       }),
     })
       .then((response) => response.json())

@@ -2,6 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import './Navbar.css'; // Ensure you have a relevant CSS file
 import { auth } from '../firebase-config';
 import { signOut } from 'firebase/auth';
+import { useNavigate } from 'react-router-dom';
+
 
 const Profile = () => {
   const [userDetails, setUserDetails] = useState({ name: '', email: '' });
@@ -10,6 +12,8 @@ const Profile = () => {
   const profileRef = useRef(null);
 
 
+  const navigate = useNavigate();
+
   ////////////////////////////////////// kirtan 
 
   
@@ -17,7 +21,7 @@ const Profile = () => {
     const handleLogout = async () => {
       try {
         await signOut(auth);
-        navigate('/select-role/worker', { replace: true });
+        navigate('select-role/customer', { replace: true });
       } catch (error) {
         // Safely extract error message
         const match = error.message.match(/\(([^)]+)\)/);

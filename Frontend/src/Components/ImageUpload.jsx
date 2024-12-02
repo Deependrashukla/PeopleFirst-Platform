@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
-import { storage } from '../firebase-config';  
+import React, { useState } from "react";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { storage } from "../firebase-config";
 
 const ImageUpload = () => {
   const [file, setFile] = useState(null);
@@ -16,7 +16,8 @@ const ImageUpload = () => {
       return;
     }
 
-    const storageRef = ref(storage, `images/${file.name}`);
+    // Save the file in the "peopleFirst" folder in Firebase Storage
+    const storageRef = ref(storage, `peopleFirst/${file.name}`);
     const uploadTask = uploadBytesResumable(storageRef, file);
 
     uploadTask.on(
@@ -31,7 +32,7 @@ const ImageUpload = () => {
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then((url) => {
           console.log("File available at:", url);
-          setDownloadURL(url); 
+          setDownloadURL(url);
         });
       }
     );
@@ -48,6 +49,10 @@ const ImageUpload = () => {
           <a href={downloadURL} target="_blank" rel="noopener noreferrer">
             {downloadURL}
           </a>
+          <div>
+            <p>Preview:</p>
+            <img src={downloadURL} alt="Uploaded" style={{ width: "300px", marginTop: "10px" }} />
+          </div>
         </div>
       )}
     </div>

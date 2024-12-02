@@ -53,6 +53,7 @@ const EventList = () => {
       })
       .then((data) => {
         if (Array.isArray(data)) {
+          console.log("data:", data)
           setEvents(data);
         } else {
           console.error("Unexpected data format, expected an array:", data);

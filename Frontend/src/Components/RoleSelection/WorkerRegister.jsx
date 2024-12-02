@@ -32,34 +32,32 @@ const RegisterWorker = () => {
 
   const dob = watch('dob');  // Watch dob value for changes
 
-  const onSubmit = (data) => {
-
+  const onSubmit = async (data) => {
     const updatedData = { ...data, age }; 
 
     if (age < 18) {
       alert("Worker must be at least 18 years old.");
       return;
     }
-  
+
     console.log(updatedData);
 
-    fetch('http://127.0.0.1:5000/add-worker-deatils', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(updatedData),
-    })
-    .then(response => response.json())
-    .then(updatedData => {
-      console.log('Success:', updatedData);
+    try {
+      const response = await fetch('http://127.0.0.1:5000/add-worker-deatils', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedData),
+      });
+      const result = await response.json();
+      console.log('Success:', result);
       alert("Registration successful! Data ready to be sent to the API.");
       navigate("/event-form");
-    })
-    .catch((error) => {
+    } catch (error) {
       console.error('Error:', error);
       alert("Registration unsuccessful!");
-    });
+    }
   };
 
   // Function to calculate age from dob
@@ -78,14 +76,11 @@ const RegisterWorker = () => {
     return 0;
   };
 
-
-  
-
   useEffect(() => {
     // Recalculate age whenever dob changes
-    const calculatedAge1 = calculateAge(dob);
-    console.log("AGE:", calculatedAge1);
-    setAge(calculatedAge1);
+    const calculatedAge = calculateAge(dob);
+    console.log("AGE:", calculatedAge);
+    setAge(calculatedAge);
   }, [dob]);
 
   const nextStep = () => setStep((prev) => prev + 1);
@@ -149,45 +144,42 @@ const RegisterWorker = () => {
           </>
         )}
 
-    {step === 4 && (
-      <>
-        <div>
-          <label>Aadhaar Card Photo</label>
-          <input
-            type="file"
-            accept="image/*"
-            {...register("aadhaarCardPhoto", { required: true })}
-            onChange={async (e) => {
-              const file = e.target.files[0];
-              const path = `aadhaarPhotos/${Date.now()}_${file.name}`;
-              const url = await uploadFile(file, path);
-              if (url) console.log("Aadhaar Card Photo URL:", url); // Log URL for testing
-            }}
-          />
-          {errors.aadhaarCardPhoto && <p>Aadhaar card photo is required</p>}
-        </div>
-        <div>
-          <label>Worker's Photo</label>
-          <input
-            type="file"
-            accept="image/*"
-            {...register("workerPhoto", { required: true })}
-            onChange={async (e) => {
-              const file = e.target.files[0];
-              const path = `workerPhotos/${Date.now()}_${file.name}`;
-              const url = await uploadFile(file, path);
-              if (url) console.log("Worker's Photo URL:", url); // Log URL for testing
-            }}
-          />
-          {errors.workerPhoto && <p>Worker's photo is required</p>}
-        </div>
-        <button type="button" onClick={prevStep}>
-          Back
-        </button>
-        <button type="button" onClick={nextStep}>
-          Next
-        </button>
-        </>
+        {/* Step 4: File Upload */}
+        {step === 4 && (
+          <>
+            <div>
+              <label>Aadhaar Card Photo</label>
+              <input
+                type="file"
+                accept="image/*"
+                {...register("aadhaarCardPhoto", { required: true })}
+                onChange={async (e) => {
+                  const file = e.target.files[0];
+                  const path = `aadhaarPhotos/${Date.now()}_${file.name}`;
+                  const url = await uploadFile(file, path);
+                  if (url) console.log("Aadhaar Card Photo URL:", url); // Log URL for testing
+                }}
+              />
+              {errors.aadhaarCardPhoto && <p>Aadhaar card photo is required</p>}
+            </div>
+            <div>
+              <label>Worker's Photo</label>
+              <input
+                type="file"
+                accept="image/*"
+                {...register("workerPhoto", { required: true })}
+                onChange={async (e) => {
+                  const file = e.target.files[0];
+                  const path = `workerPhotos/${Date.now()}_${file.name}`;
+                  const url = await uploadFile(file, path);
+                  if (url) console.log("Worker's Photo URL:", url); // Log URL for testing
+                }}
+              />
+              {errors.workerPhoto && <p>Worker's photo is required</p>}
+            </div>
+            <button type="button" onClick={prevStep}>Back</button>
+            <button type="button" onClick={nextStep}>Next</button>
+          </>
         )}
 
         {/* Step 5: Contact and Personal Information */}

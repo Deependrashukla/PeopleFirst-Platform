@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import Pusher from "pusher-js"; // Import Pusher library
 import { auth } from "../firebase-config"; // Import auth from Firebase or your auth provider
 import "./worker_dashboard.css"; // Updated CSS for styling
 
@@ -9,9 +8,12 @@ const WorkerDashboard = () => {
   const [error, setError] = useState(null);
   const [authToken, setAuthToken] = useState('');
   const [workerId, setWorkerId] = useState('');
-  const [pusherChannel, setPusherChannel] = useState(null);
+  const [aadharNumber, setAadharNumber] = useState(''); // Store the aadhar number
 
-  // Set up authentication state change listener
+  const [formData, setFormData] = useState({
+    aadharCard: ""
+  });
+
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
       if (user) {
@@ -19,71 +21,61 @@ const WorkerDashboard = () => {
           const token = await user.getIdToken();
           setAuthToken(token);
 
-          // After successful login, subscribe to the Pusher channel
-          const channel = new Pusher('b472bc7e618991d3b479', {
-            cluster: 'ap2',
-            forceTLS: true,
-            disableStats: true, // Optional: to reduce bandwidth usage
-            enabledTransports: ['ws', 'wss', 'xhr_polling', 'xhr_streaming'],
-          }).subscribe(`worker-${user.email}-channel`); // Example: dynamic channel based on user email
+          // Directly use the email from Firebase Auth
+          const email = user.email;
 
-          setPusherChannel(channel);
+          // Fetch user data from the backend using the email
+          const userDataResponse = await fetch('http://127.0.0.1:5000/get_user_data', {
+            method: 'POST',  // Assuming you use POST to send data
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`,
+            },
+            body: JSON.stringify({ email })  // Sending the email in the request body
+          });
 
-          // Listen to events on the channel (for example, 'new-appointment')
-          const taskHandler = (data) => {
-            console.log('New task received:', data);
-            // Update workerData based on the new event if necessary
-            setWorkerData((prevData) => ({
-              ...prevData,
-              new_task: data,
-            }));
-          };
+          const userData = await userDataResponse.json();
+          console.log("worker data: ", userData.success)
 
-          channel.bind('new-appointment', taskHandler);
+          if (true) {
+            // Extract the aadhar_number from the response
+            const userAadharNumber = userData.data.aadhar_number;
+            console.log("aadhar:", userAadharNumber)
+            // Fetch appointments using the aadhar_number
+            const appointmentResponse = await fetch('http://127.0.0.1:5000/get_appointment', {
+              method: 'POST',  // Assuming you use POST for this request too
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+              },
+              body: JSON.stringify({ aadhar_number: 123456789102 })  // Send aadhar_number to get appointments
+            });
 
-          // Cleanup function to unsubscribe from the Pusher channel when the user logs out
-          return () => {
-            channel.unbind('new-appointment', taskHandler); // Unbind the event listener
-            pusherChannel?.unsubscribe(); // Unsubscribe from the channel if it's already set
-          };
-
+            const appointmentData = await appointmentResponse.json();
+            console.log("appointment", appointmentData.data)
+            console.log("workdata", workerData)
+            if (true) {
+              setWorkerData(appointmentData.data); // Assign the 'data' field to workerData
+            } else {
+              setError("No appointments found.");
+            }
+          } else {
+            throw new Error('User data not found');
+          }
         } catch (error) {
-          console.error("Error fetching auth token:", error.message);
+          console.error("Error fetching data:", error.message);
+          setError("An error occurred while fetching the data.");
+        } finally {
+          setLoading(false);
         }
       } else {
-        // User is logged out, clean up
         setAuthToken('');
-        if (pusherChannel) {
-          pusherChannel.unsubscribe(); // Unsubscribe from the Pusher channel
-        }
-        console.log("User logged out");
+        setWorkerData(null);
       }
     });
 
-    // Cleanup on component unmount
     return () => unsubscribe();
-
-  }, [pusherChannel]); // Only subscribe/unsubscribe when the pusherChannel changes
-
-  // Handle the worker data fetching based on workerId
-  useEffect(() => {
-    const fetchWorkerWorks = async () => {
-      try {
-        const data = workerId; // Replace with actual API call if required
-        if (data) {
-          setWorkerData(data);
-        } else {
-          setError("No data found.");
-        }
-      } catch (err) {
-        setError("An error occurred while fetching the data.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchWorkerWorks();
-  }, [workerId]);
+  }, [authToken]);
 
   if (loading) {
     return <div className="loader">Loading...</div>;
@@ -97,56 +89,21 @@ const WorkerDashboard = () => {
     <div className="worker-dashboard">
       <h1 className="dashboard-title">Worker Dashboard</h1>
       <div className="dashboard-columns">
-        {/* Completed Works */}
+        {/* Display appointments or tasks */}
         <div className="dashboard-section">
-          <h2 className="section-title green">Completed Works</h2>
+          <h2 className="section-title grey">Awaiting Appointments</h2>
           <div className="job-cards">
-            {workerData?.completed_works?.length > 0 ? (
-              workerData.completed_works.map((work, index) => (
-                <div className="job-card green-bg" key={index}>
-                  <div>{work.title}</div>
-                  <div>{work.description}</div>
-                  <div>Status: {work.status}</div>
-                </div>
-              ))
-            ) : (
-              <p className="no-jobs">No completed works.</p>
-            )}
-          </div>
-        </div>
-
-        {/* In-Progress Works */}
-        <div className="dashboard-section">
-          <h2 className="section-title orange">In-Progress Works</h2>
-          <div className="job-cards">
-            {workerData?.in_progress_works?.length > 0 ? (
-              workerData.in_progress_works.map((work, index) => (
-                <div className="job-card orange-bg" key={index}>
-                  <div>{work.title}</div>
-                  <div>{work.description}</div>
-                  <div>Status: {work.status}</div>
-                </div>
-              ))
-            ) : (
-              <p className="no-jobs">No in-progress works.</p>
-            )}
-          </div>
-        </div>
-
-        {/* Awaiting Works */}
-        <div className="dashboard-section">
-          <h2 className="section-title grey">Awaiting Works</h2>
-          <div className="job-cards">
-            {workerData?.awaiting_works?.length > 0 ? (
-              workerData.awaiting_works.map((work, index) => (
+            {workerData?.length > 0 ? (
+              workerData.map((appointment, index) => (
                 <div className="job-card grey-bg" key={index}>
-                  <div>{work.title}</div>
-                  <div>{work.description}</div>
-                  <div>Status: {work.status}</div>
+                  <div><strong>Service Type:</strong> {appointment.service_type}</div>
+                  <div><strong>User Email:</strong> {appointment.user_email}</div>
+                  <div><strong>Status:</strong> {appointment.status}</div>
+                  <div><strong>Appointment Time:</strong> {new Date(appointment.appointment_time).toLocaleString()}</div> {/* Format date */}
                 </div>
               ))
             ) : (
-              <p className="no-jobs">No awaiting works.</p>
+              <p className="no-jobs">No awaiting appointments.</p>
             )}
           </div>
         </div>

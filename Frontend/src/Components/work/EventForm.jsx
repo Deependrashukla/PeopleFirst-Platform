@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import './EventForm.css';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
 const EventForm = () => {
     const [formData, setFormData] = useState({
@@ -13,6 +14,8 @@ const EventForm = () => {
         category: '',
         aadhaarNumber: '',
     });
+    const navigate = useNavigate(); // Initialize useNavigate
+
 
     const [authToken, setAuthToken] = useState('');
     const [submitting, setSubmitting] = useState(false); // Track submission state
@@ -74,6 +77,7 @@ const EventForm = () => {
             const data = await response.json();
             if (data.message === 'ListWorker added successfully') {
                 alert('Event added successfully!');
+                navigate('/cart');
                 setFormData({
                     title: '',
                     description: '',

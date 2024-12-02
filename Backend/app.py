@@ -8,10 +8,10 @@ from firebase_admin import credentials, storage
 from firebase import verify_firebase_token
 
 # Firebase Initialization
-# cred = credentials.Certificate(r"C:\Users\LENOVO\Downloads\peoplefirst-caba5-firebase-adminsdk-yhvto-516641ae4b.json")
-# firebase_admin.initialize_app(cred, {
-#     'storageBucket': 'peoplefirst-caba5.appspot.com'
-# })
+cred = credentials.Certificate(r"C:\Users\LENOVO\Downloads\peoplefirst-caba5-firebase-adminsdk-yhvto-516641ae4b.json")
+firebase_admin.initialize_app(cred, {
+    'storageBucket': 'padhai-abab6.appspot.com'
+})
 
 # Flask App Initialization
 app = Flask(__name__)
@@ -37,24 +37,16 @@ pusher_client = pusher.Pusher(
 # User Table (For homeowners/service requesters)
 class User(db.Model):  # Note: Capitalize class names by convention
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)  # Auto-increment ID
-    uid = db.Column(db.String(100), unique=True)  # Changed to unique instead of primary_key
+    #uid = db.Column(db.String(100), unique=True)  # Changed to unique instead of primary_key
+    uid = db.Column(db.String(255), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     first_name = db.Column(db.String(100))
     last_name = db.Column(db.String(100))
 
-# Worker Login Table
-# class WorkerLogin(db.Model):
-#     id = db.Column(db.Integer, primary_key=True)
-#     email = db.Column(db.String(120), unique=True, nullable=False)
-#     first_name = db.Column(db.String(100))
-#     last_name = db.Column(db.String(100))
-
-#     def __repr__(self):
-#         return f"<WorkerLogin {self.email}>"
 
 # Worker Table
 class Worker(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     first_name = db.Column(db.String(100), nullable=False)
     last_name = db.Column(db.String(100), nullable=False)
     address = db.Column(db.String(255), nullable=False)
@@ -85,10 +77,13 @@ class Work(db.Model):
     status = db.Column(db.String(20), nullable=False)  # 'completed', 'in-progress', or 'awaiting'
     start_time = db.Column(db.DateTime, nullable=False)
     end_time = db.Column(db.DateTime, nullable=False)
-    worker_id = db.Column(db.Integer, db.ForeignKey('worker.id'), nullable=False)
+    worker_id = db.Column(db.Integer, db.ForeignKey('worker.id'), nullable=True )  # Foreign key linking to Worker
+    imageurl = db.Column(db.String(255), nullable=True)
+    aadhaar_number = db.Column(db.String(12), nullable=False)
 
     def __repr__(self):
         return f"<Work {self.title}>"
+
 
 # Availability Table
 class Availability(db.Model):
@@ -118,20 +113,95 @@ class Appointment(db.Model):
     def __repr__(self):
         return f"<Appointment User {self.user_id}, Worker {self.worker_id}, Status {self.status}>"
 
-# ----------------------------- ROUTES -----------------------------
 
-@app.route('/register-user', methods=['POST'])
-def register_user():
+class Appoint(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_email = db.Column(db.String(100), nullable=False)
+    service_type = db.Column(db.String(100), nullable=False)
+    appointment_time = db.Column(db.DateTime, nullable=False)
+    status = db.Column(db.String(20), nullable=False, default='pending')
+    worker_aadhar = db.Column(db.String(100), nullable=False)
+    
+@app.route("/get_appointment", methods=['POST'])
+def get_appointment():
     data = request.get_json()
-    new_user = User(
-        first_name=data.get('first_name'),
-        last_name=data.get('last_name'),
-        email=data.get('email'),
-        mobile=data.get('mobile')
+    worker_aadhar = data.get('aadhar_number')  # Ensure this matches the field name
+
+    appointments_data = Appoint.query.filter_by(worker_aadhar=str(worker_aadhar)).all()
+    print("appointments_data", appointments_data)
+    
+    # If no data found, return an empty response or a message
+    if not appointments_data:
+        return jsonify({"message": "No appointments found", "data": []})
+    
+    # Convert each appointment object to a dictionary
+    appointments_list = [
+        {
+            "id": appointment.id,
+            "user_email": appointment.user_email,
+            "service_type": appointment.service_type,
+            "appointment_time": appointment.appointment_time,
+            "status": appointment.status,
+            "worker_aadhar": appointment.worker_aadhar
+        }
+        for appointment in appointments_data
+    ]
+    
+    return jsonify({"message": "Successfully fetched the data", "data": appointments_list})
+
+
+@app.route("/get_user_data", methods=['POST'])  # Make sure it's POST method
+def get_user_data():
+    data = request.get_json()
+    email = data.get('email')
+
+    # Query user by email
+    user_data = Worker.query.filter_by(email=email).first()  # Use first() to get one result
+
+    if user_data is None:
+        return jsonify({"message": "User not found", "data": {}})
+
+    # Return the user data, adjust to match your user object structure
+    return jsonify({"message": "Successfully fetched the data", "data": {
+        "email": user_data.email,
+        "aadhar_number": user_data.aadhaar_number
+    }})
+
+
+@app.route("/post_appointment", methods=['POST'])
+def post_appointment():
+    data = request.get_json()
+    user_email = data.get("user_email")
+    service_type = data.get("service_type")
+    appointment_time = data.get("appointment_time")
+    status = data.get("status")
+    worker_aadhar = data.get("worker_aadhar")
+    
+    appoint = Appoint(
+        user_email = user_email,
+        service_type = service_type,
+        appointment_time = appointment_time,
+        status = status,
+        worker_aadhar = worker_aadhar
     )
-    db.session.add(new_user)
+    
+    db.session.add(appoint)
     db.session.commit()
-    return jsonify({'message': 'User registered successfully!'}), 201
+    return jsonify({"message": "Succesfully added the appointment"}), 201
+
+    
+# ----------------------------- ROUTES -----------------------------
+appointments_data = {
+    "worker1": [
+        {"title": "Fix Broken Pipe", "description": "Fix the leaking pipe in kitchen", "status": "pending"},
+        {"title": "Install New AC", "description": "Install the AC in living room", "status": "pending"},
+    ],
+    "worker2": [
+        {"title": "Repair Car Engine", "description": "Repair the engine of the car", "status": "approved"},
+    ]
+}
+
+
 
 @app.route('/add-worker-deatils', methods=['POST'])
 def register_worker():
@@ -171,58 +241,68 @@ def add_appointment():
     return jsonify({'message': 'Appointment created successfully!'}), 201
 
 
-@app.route('/book-appointment', methods=['POST'])
-def book_appointment():
-    decoded_token, error_response = verify_firebase_token()
-    if error_response:
-        return jsonify(error_response)
-
-    # email = decoded_token.get('email')  # Extract email from the decoded Firebase token
+@app.route('/get-worker-appointments', methods=['GET'])
+def get_worker_appointments():
     try:
-        data = request.get_json()
+        # Get the token from Authorization header
+        decoded_token, error_response = verify_firebase_token()
+        print(decoded_token)
+        if error_response:
+            return jsonify(error_response)
 
-        # Debugging: print the received data to check if workerId exists
-        print("Received data:", data)
+        email = decoded_token.get('email')
+        # Fetch appointments for the worker (this is just a mock; replace with actual data from DB)
+        worker_appointments = appointments_data.get(user_id, [])
 
-        event_id = data['eventId']
-        aadhaar_number = data['aadhaar_number']  # Make sure workerId is in the payload
-        user_id = data['userId']
-        user_email = data['email']  # Get email from the request data
-
-        if not aadhaar_number:
-            raise ValueError("Worker ID is missing from request")
-
-        # Generate a unique channel for the specific worker
-        worker_channel = f'worker-{user_email}-channel'
-        print(worker_channel)
-        # Send Pusher event to notify the specific worker
-        pusher_client.trigger(
-            worker_channel,  # Dynamic channel based on worker ID
-            'new-appointment',  # Event name
-            {
-                'eventId': event_id,
-                'userId': user_id,
-                'userEmail': user_email,  # Send the email along with other data
-                'message': 'New appointment request!'
-            }
-        )
-
-        return jsonify({'success': True, 'message': 'Appointment request sent.'})
+        if worker_appointments:
+            return jsonify({"success": True, "workerData": {"appointments": worker_appointments}})
+        else:
+            return jsonify({"success": False, "message": "No appointments found."})
 
     except Exception as e:
-        print(f"Error: {e}")
-        return jsonify({'success': False, 'message': str(e)}), 500
+        return jsonify({"success": False, "message": str(e)}), 400
+
+
+# Endpoint to book an appointment
+@app.route('/book-appointment', methods=['POST'])
+def book_appointment():
+    try:
+        # Get the token from Authorization header
+        decoded_token, error_response = verify_firebase_token()
+        print(decoded_token)
+        if error_response:
+            return jsonify(error_response)
+
+        email = decoded_token.get('email')
+
+        # Get the data from the request body
+        data = request.get_json()
+        event_id = data.get('eventId')
+        aadhaar_number = data.get('aadhaar_number')
+
+        # In a real scenario, save the booking request to a database
+        # For now, just return a mock success message
+        # Here you would normally send the appointment request to the worker
+
+        print(f"Appointment booked by user {user_email} (UID: {user_id}) for event {event_id} with Aadhaar {aadhaar_number}")
+
+        return jsonify({"success": True, "message": "Appointment request sent successfully to the worker!"})
+
+    except Exception as e:
+        return jsonify({"success": False, "message": str(e)}), 400
+
 
 @app.route('/add-work', methods=['POST'])
 def add_listworker():
     decoded_token, error_response = verify_firebase_token()
+    print(decoded_token)
     if error_response:
         return jsonify(error_response)
 
     email = decoded_token.get('email')
-    
-    
     data = request.get_json()  # Use get_json() to parse JSON body
+    print(data)
+    print('sonal')
 
     # Check if start_time and end_time are in the request data and are not None
     start_time_str = data.get('startTime')
@@ -240,14 +320,15 @@ def add_listworker():
     # Now create the new listworker object
     new_listworker = Work(
         title=data.get('title'),
-        category=data.get('category'),
-        work_description=data.get('description'),
+        description=data.get('description'),
         price=data.get('priceRange'),
         city=data.get('place'),
-        imageurl=data.get('imageurl'),  # If needed, else remove this line
+        imageurl=data.get('imageurl'), 
         start_time=start_time,
         end_time=end_time,
-        aadhaar_number = data.get("aadhaarNumber")
+        aadhaar_number = data.get("aadhaarNumber"),
+        status = 'not-completed'
+        
     )
 
     db.session.add(new_listworker)
@@ -256,48 +337,7 @@ def add_listworker():
     return jsonify({'message': 'ListWorker added successfully'}), 201
 
 
-# @app.route('/listworks', methods=['GET'])
-# def get_listworkers():
-#     # decoded_token, error_response = verify_firebase_token()
-#     # if error_response:
-#     #     return jsonify(error_response)
 
-#     # email = decoded_token.get('email')
-#     city = request.args.get('city')
-#     category = request.args.get('category')
-
-#     # Log the incoming query parameters for debugging
-#     print(f"Received city: {city}, category: {category}")
-
-#     # Validate input
-#     if not city or not category:
-#         return jsonify({'message': 'City and category are required parameters'}), 400
-
-#     try:
-#         # Query the ListWorker table with the given city and category
-#         listworkers = Work.query.filter_by(city=city, category=category).all()
-
-#         # Return results as JSON
-#         return jsonify([{
-#             'id': listworker.id,
-#             'title': listworker.title,
-#             'category': listworker.category,
-#             'work_description': listworker.work_description,
-#             'price': listworker.price,
-#             'city': listworker.city,
-#             'imageurl': listworker.imageurl,
-#             'start_time': listworker.start_time.strftime('%Y-%m-%d %H:%M:%S'),
-#             'end_time': listworker.end_time.strftime('%Y-%m-%d %H:%M:%S'),
-#             'aadhaar_number' : listworker.aadhaar_number
-#         } for listworker in listworkers]), 200
-
-#     except Exception as e:
-#         # Log and return a general error message if any issue occurs during the query
-#         print(f"Error: {str(e)}")
-#         return jsonify({'message': 'An error occurred while processing the request'}), 500
-
-
-################################################################################################
 
 
     
@@ -315,22 +355,6 @@ def login():
     #data = request.get_json()
     return jsonify({'message': "login succesful"})
 
-    # Extract email and password from the request body
-    #email = data.get('email')
-    #password = data.get('password')
-
-
-    # Check if the worker exists in the database
-    #worker = Login.query.filter_by(email=email).first()
-    
-    #print("worker", worker)
-    # if worker:
-    #     if worker.password == password:
-    #         return jsonify({'message': 'Login successful'}), 200
-    #     else:
-    #         return jsonify({'message': 'Invalid email or password'}), 401
-    # else:
-    #     return jsonify({'message': 'Worker does not exist. Please register.'}), 404
 
     
 @app.route('/register', methods=['POST'])
@@ -346,12 +370,11 @@ def register():
     #     return jsonify({'message': 'Email and password are required'}), 400
 
     # Check if the worker already exists
-    existing_worker = Login.query.filter_by(email=email).first()
-    if existing_worker:
-        
-        return jsonify({'message': 'Worker already registered'}), 409
+    # existing_worker = User.query.filter_by(email=email).first()
+    # if existing_worker:
+    #     return jsonify({'message': 'Worker already registered'}), 409
     # Create a new worker
-    new_worker = Login(first_name=first_name, last_name = last_name, email=email, uid = uid)  # Hash the password in a real scenario
+    new_worker = User(first_name=first_name, last_name = last_name, email=email, uid = uid)  # Hash the password in a real scenario
     db.session.add(new_worker)
     db.session.commit()
     return jsonify({'message': 'Worker registered successfully'}), 201
@@ -362,7 +385,6 @@ def get_listworkers():
     # decoded_token, error_response = verify_firebase_token()
     # if error_response:
     #     return jsonify(error_response)
-
     # email = decoded_token.get('email')
     city = request.args.get('city')
     category = request.args.get('category')
@@ -370,8 +392,6 @@ def get_listworkers():
     #     (Work.city == city if city else True),  # Filter by city if it's defined
     #     Work.title == category  # Always filter by category
     # ).all()
-
-
     # Log the incoming query parameters for debugging
     print(f"Received city: {city}, category: {category}")
 
@@ -391,13 +411,13 @@ def get_listworkers():
         return jsonify([{
             'id': listworker.id,
             'title': listworker.title,
-            # 'work_description': listworker.description,
+            'work_description': listworker.description,
             'price': listworker.price,
             'city': listworker.city,
-            #'imageurl': listworker.imageurl,
+            'imageurl': listworker.imageurl,
             'start_time': listworker.start_time.strftime('%Y-%m-%d %H:%M:%S'),
             'end_time': listworker.end_time.strftime('%Y-%m-%d %H:%M:%S'),
-            #'aadhaar_number' : listworker.aadhaar_number
+            'aadhaar_number' : listworker.aadhaar_number
         } for listworker in listworkers]), 200
 
     except Exception as e:
@@ -422,88 +442,6 @@ import razorpay
 razorpay_client = razorpay.Client(auth=("rzp_test_jrhUMjijQQywXQ", "vAWsD9TOjoc9SAWbVQ3jUJjX"))
 
 
-# @app.route('/create-order', methods=['POST'])
-# def create_order():
-#     data = request.get_json()
-#     amount = data.get('amount')  # Amount in paise
-
-#     # Create an order using Razorpay API
-#     order = razorpay_client.order.create({
-#         'amount': amount,
-#         'currency': 'INR',
-#         'payment_capture': '1',  # Automatic capture
-#     })
-
-#     order_id = order['id']
-
-#     # Return the order ID and Razorpay key to the frontend
-#     return jsonify({
-#         'order_id': order_id,
-#         'razorpay_key': 'vAWsD9TOjoc9SAWbVQ3jUJjX'  # Use your Razorpay API key here
-#     })
-    
-# @app.route('/verify-payment', methods=['POST'])
-# def verify_payment():
-#     data = request.get_json()
-#     payment_id = data.get('payment_id')
-#     order_id = data.get('order_id')
-#     signature = data.get('razorpay_signature')
-
-#     # Verify the payment signature using Razorpay's SDK
-#     try:
-#         razorpay_client.utility.verify_payment_signature({
-#             'razorpay_order_id': order_id,
-#             'razorpay_payment_id': payment_id,
-#             'razorpay_signature': signature
-#         })
-#         # Payment is valid
-#         return jsonify({'status': 'Payment successful'})
-#     except razorpay.errors.SignatureVerificationError:
-#         # Invalid payment signature
-#         # return jsonify({'status': 'Payment verification failed'}), 400
-#         pass
-# # ----------------------------- MAIN -----------------------------
-#     # email = decoded_token.get('email')  # Extract email from the decoded Firebase token
-#     try:
-#         data = request.get_json()
-
-#         # Debugging: print the received data to check if workerId exists
-#         print("Received data:", data)
-
-#         event_id = data['eventId']
-#         aadhaar_number = data['aadhaar_number']  # Make sure workerId is in the payload
-#         user_id = data['userId']
-#         user_email = data['email']  # Get email from the request data
-
-#         if not aadhaar_number:
-#             raise ValueError("Worker ID is missing from request")
-
-#         # Generate a unique channel for the specific worker
-#         worker_channel = f'worker-{aadhaar_number}-channel'
-#         print(worker_channel)
-#         # Send Pusher event to notify the specific worker
-#         pusher_client.trigger(
-#             worker_channel,  # Dynamic channel based on worker ID
-#             'new-appointment',  # Event name
-#             {
-#                 'eventId': event_id,
-#                 'userId': user_id,
-#                 'userEmail': user_email,  # Send the email along with other data
-#                 'adharNumber': aadhaar_number,
-#                 'message': 'New appointment request!'
-#             }
-#         )
-
-#         return jsonify({'success': True, 'message': 'Appointment request sent.'})
-
-#     except Exception as e:
-#         print(f"Error: {e}")
-#         return jsonify({'success': False, 'message': str(e)}), 500
-
-
-import razorpay
-
-razorpay_client = razorpay.Client(auth=("rzp_test_jrhUMjijQQywXQ", "vAWsD9TOjoc9SAWbVQ3jUJjX"))
 
 @app.route('/create-order', methods=['POST'])
 def create_order():
