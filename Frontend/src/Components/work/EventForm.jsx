@@ -77,7 +77,7 @@ const EventForm = () => {
             const data = await response.json();
             if (data.message === 'ListWorker added successfully') {
                 alert('Event added successfully!');
-                navigate('/cart');
+                navigate('/worker_dashboard');
                 setFormData({
                     title: '',
                     description: '',

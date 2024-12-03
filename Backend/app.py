@@ -63,9 +63,27 @@ class Worker(db.Model):
 
     # Relationships to Work Table
     works = db.relationship('Work', backref='worker', lazy=True)
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "first_name": self.first_name,
+            "last_name": self.last_name,
+            "address": self.address,
+            "pincode": self.pincode,
+            "occupation": self.occupation,
+            "aadhaar_number": self.aadhaar_number,
+            "experience": self.experience,
+            "mobile": self.mobile,
+            "dob": self.dob.isoformat() if self.dob else None,  # Handle date formatting
+            "age": self.age,
+            "email": self.email,
+            "aadhaar_card_photo": self.aadhaar_card_photo,
+            "worker_photo": self.worker_photo,
+            "works": [work.to_dict() for work in self.works]  # If you want to include related work data
+        }
 
-    def __repr__(self):
-        return f"<Worker {self.first_name} {self.last_name}>"
+    # def __repr__(self):
+    #     return f"<Worker {self.first_name} {self.last_name}>"
 
 # Work Table
 class Work(db.Model):
@@ -154,9 +172,11 @@ def get_appointment():
 def get_user_data():
     data = request.get_json()
     email = data.get('email')
+    print(email, "son")
 
     # Query user by email
     user_data = Worker.query.filter_by(email=email).first()  # Use first() to get one result
+    print(user_data, 'sonal')
 
     if user_data is None:
         return jsonify({"message": "User not found", "data": {}})
@@ -187,7 +207,7 @@ def post_appointment():
     
     db.session.add(appoint)
     db.session.commit()
-    return jsonify({"message": "Succesfully added the appointment"}), 201
+    return jsonify({"success": True,"message": "Succesfully added the appointment"}), 201
 
     
 # ----------------------------- ROUTES -----------------------------
@@ -382,17 +402,23 @@ def register():
 
 @app.route('/listwork', methods=['GET'])
 def get_listworkers():
-    # decoded_token, error_response = verify_firebase_token()
-    # if error_response:
-    #     return jsonify(error_response)
-    # email = decoded_token.get('email')
     city = request.args.get('city')
     category = request.args.get('category')
-    # listworkers = Work.query.filter(
-    #     (Work.city == city if city else True),  # Filter by city if it's defined
-    #     Work.title == category  # Always filter by category
-    # ).all()
-    # Log the incoming query parameters for debugging
+    if not city and not category:
+        listworkers = Work.query.all()
+        return jsonify([{
+            'id': listworker.id,
+            'title': listworker.title,
+            'work_description': listworker.description,
+            'price': listworker.price,
+            'city': listworker.city,
+            'imageurl': listworker.imageurl,
+            'start_time': listworker.start_time.strftime('%Y-%m-%d %H:%M:%S'),
+            'end_time': listworker.end_time.strftime('%Y-%m-%d %H:%M:%S'),
+            'aadhaar_number' : listworker.aadhaar_number
+        } for listworker in listworkers]), 200
+
+        
     print(f"Received city: {city}, category: {category}")
 
     # Validate input
@@ -481,14 +507,97 @@ def verify_payment():
         # Invalid payment signature
         return jsonify({'status': 'Payment verification failed'}), 400
     
-@app.route('/api/details/<aadhaar_number>', methods=['GET'])
-def details(aadhaar_number):
-    print(aadhaar_number)
 
-    # Log the received data
-    # print("Received data:", aadhaar_number)
-    # Query your aadhaar_numberbase or perform operations
-    return jsonify({'aadhaar_number': aadhaar_number})
+
+@app.route('/update_appointment_status', methods=['POST'])
+def update_appointment_status():
+    try:
+        # Parse JSON request
+        data = request.get_json()
+        appointment_id = data.get('appointment_id')
+        new_status = data.get('status')
+        print(data)
+        print(appointment_id, "sonal")
+        print(new_status, 'spnu')
+
+        if not appointment_id or not new_status:
+            return jsonify({'success': False, 'message': 'Appointment ID and status are required'}), 400
+
+        # Fetch the appointment
+        appointment = Appoint.query.filter_by(id=appointment_id).first()
+
+        if not appointment:
+            return jsonify({'success': False, 'message': 'Appointment not found'}), 404
+
+        # Update status
+        appointment.status = new_status
+        db.session.commit()
+
+        return jsonify({'success': True, 'message': 'Appointment status updated successfully'})
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+    
+# @app.route('/api/details/<aadhaar_number>', methods=['GET'])
+# def details(aadhaar_number):
+#     print(aadhaar_number)
+
+#     # Log the received data
+#     # print("Received data:", aadhaar_number)
+#     # Query your aadhaar_numberbase or perform operations
+#     return jsonify({'aadhaar_number': aadhaar_number})
+@app.route('/get_appointment_status', methods=['POST'])
+def get_appointment_status():
+    try:
+        data = request.json
+        print(data, 'so')
+        user_email = data.get('user_email')
+        worker_aadhar = data.get('worker_aadhar')
+
+        if not user_email or not worker_aadhar:
+            return jsonify({"success": False, "message": "Missing parameters"}), 400
+
+        # Query the database for the appointment
+        appointment = Appoint.query.filter_by(user_email=user_email, worker_aadhar=worker_aadhar).first()
+        print(appointment,'sonalgupta')
+
+        if appointment:
+            return jsonify({
+                "success": True,
+                "status": appointment.status
+            }), 200
+
+        return jsonify({
+            "success": False,
+            "message": "Appointment not found"
+        }), 404
+    except Exception as e:
+        return jsonify({"success": False, "message": str(e)}), 500
+
+
+@app.route('/get_worker_details', methods=['GET'])
+def get_worker_details():
+    aadhaar = request.args.get('aadhaar')
+    print(aadhaar, "sonu")
+
+    if not aadhaar:
+        return jsonify({"success": False, "message": "Aadhaar number is required"}), 400
+
+    # Fetch worker details from the database (replace this with actual query)
+    #worker = db.collection('Worker').document(aadhaar).get()  # Example using Firestore
+    #worker = ''
+    worker = Worker.query.filter_by(aadhaar_number=aadhaar).first()
+    print(worker)
+
+    if worker:
+        print(worker)
+        worker_data = worker.to_dict()
+        print(worker_data)
+        return jsonify({"success": True, "worker": worker_data}), 200
+    else:
+        return jsonify({"success": False, "message": "Worker not found"}), 404
+
+
 
 if __name__ == '__main__':
     with app.app_context():

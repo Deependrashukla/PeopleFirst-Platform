@@ -1,61 +1,132 @@
-/* EventDetails.css */
-
 .event-details {
-    font-family: Arial, sans-serif;
-    margin: 20px;
-    padding: 20px;
-    max-width: 900px;
-    margin: auto;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  .event-details h1 {
-    font-size: 2.5rem;
-    color: #333;
-    margin-bottom: 10px;
-  }
-  
-  .event-details img {
-    width: 100%;
-    height: auto;
-    border-radius: 8px;
-    margin: 20px 0;
-  }
-  
-  .event-details p {
-    font-size: 1.1rem;
-    margin: 10px 0;
-    color: #555;
-  }
-  
-  .event-details p strong {
-    color: #000;
-  }
-  
-  .event-details .button-container {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-  }
-  
-  .event-details .book-button {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    font-size: 1.2rem;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .event-details .book-button:hover {
-    background-color: #0056b3;
-  }
-  
-  .event-details .book-button:active {
-    background-color: #00408d;
-  }
-  
+  font-family: Arial, sans-serif;
+  padding: 20px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.event-details h1 {
+  text-align: center;
+  color: #333;
+  font-size: 2.5em;
+  margin-bottom: 20px;
+}
+
+.event-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  margin-bottom: 20px;
+}
+
+.event-info {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.event-info p {
+  font-size: 1.1em;
+  margin: 10px 0;
+}
+
+.event-info strong {
+  font-weight: bold;
+}
+
+.notification-message {
+  background-color: #f44336;
+  color: white;
+  padding: 15px;
+  margin-top: 20px;
+  border-radius: 5px;
+  font-size: 1.2em;
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+.book-button,
+.pay-button {
+  background-color: #4CAF50;
+  color: white;
+  padding: 15px 30px;
+  font-size: 1.2em;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.book-button:hover,
+.pay-button:hover {
+  background-color: #45a049;
+}
+
+.payment-method {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 30px;
+}
+
+.payment-method h3 {
+  text-align: center;
+  font-size: 1.8em;
+  color: #333;
+}
+
+.amount-control {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0;
+}
+
+.amount-control button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  font-size: 1.5em;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.amount-control button:hover {
+  background-color: #45a049;
+}
+
+.amount-input {
+  width: 100px;
+  padding: 10px;
+  font-size: 1.2em;
+  text-align: center;
+  margin: 0 15px;
+  border: 2px solid #ddd;
+  border-radius: 5px;
+}
+
+.worker-details {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 30px;
+}
+
+.worker-details h3 {
+  font-size: 1.8em;
+  color: #333;
+  text-align: center;
+}
+
+.worker-details p {
+  font-size: 1.1em;
+  margin: 10px 0;
+}

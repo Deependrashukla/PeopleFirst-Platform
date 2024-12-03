@@ -48,7 +48,7 @@ const WorkerDashboard = () => {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`,
               },
-              body: JSON.stringify({ aadhar_number: 123456789102 })  // Send aadhar_number to get appointments
+              body: JSON.stringify({ aadhar_number: userAadharNumber })  // Send aadhar_number to get appointments
             });
 
             const appointmentData = await appointmentResponse.json();
@@ -77,6 +77,37 @@ const WorkerDashboard = () => {
     return () => unsubscribe();
   }, [authToken]);
 
+  const acceptAppointment = async (appointmentId) => {
+    try {
+      const response = await fetch('http://127.0.0.1:5000/update_appointment_status', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`,
+        },
+        body: JSON.stringify({ appointment_id: appointmentId, status: 'accepted' }),
+      });
+
+      const result = await response.json();
+      console.log(result)
+      console.log("sona")
+      if (result.success) {
+        // Update the appointment status in the frontend state
+        setWorkerData((prevData) =>
+          prevData.map((appointment) =>
+            appointment.id === appointmentId
+              ? { ...appointment, status: 'accepted' }
+              : appointment
+          )
+        );
+      } else {
+        console.error("Failed to update appointment status:", result.message);
+      }
+    } catch (err) {
+      console.error("Error updating appointment status:", err.message);
+    }
+  };
+
   if (loading) {
     return <div className="loader">Loading...</div>;
   }
@@ -97,13 +128,18 @@ const WorkerDashboard = () => {
               workerData.map((appointment, index) => (
                 <div className="job-card grey-bg" key={index}>
                   <div><strong>Service Type:</strong> {appointment.service_type}</div>
-                  <div><strong>User Email:</strong> {appointment.user_email}</div>
+                  {/* <div><strong>User Email:</strong> {appointment.user_email}</div> */}
                   <div><strong>Status:</strong> {appointment.status}</div>
                   <div><strong>Appointment Time:</strong> {new Date(appointment.appointment_time).toLocaleString()}</div> {/* Format date */}
+                  {appointment.status === 'Not completed' && (
+                    <button onClick={() => acceptAppointment(appointment.id)}>
+                      Accept
+                    </button>
+                  )}
                 </div>
               ))
             ) : (
-              <p className="no-jobs">No awaiting appointments.</p>
+              <p className="no-jobs"> No awaiting appointments.</p>
             )}
           </div>
         </div>

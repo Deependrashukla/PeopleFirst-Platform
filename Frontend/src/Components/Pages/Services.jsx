@@ -3,10 +3,10 @@ import { useNavigate } from "react-router-dom";
 //import "./ServicesPage.css";
 
 const services = [
-  { name: "Maid", icon: "🧼", discount: "₹75 OFF" },
-  { name: "Cook", icon: "🍳", discount: "₹100 OFF" },
-  { name: "Plumber", icon: "🔧", discount: "₹50 OFF" },
-  { name: "Electrician", icon: "💡", discount: "₹75 OFF" },
+  { name: "maid", icon: "🧼", discount: "₹75 OFF" },
+  { name: "cook", icon: "🍳", discount: "₹100 OFF" },
+  { name: "plumber", icon: "🔧", discount: "₹50 OFF" },
+  { name: "electrician", icon: "💡", discount: "₹75 OFF" },
 ];
 
 const ServicesPage = () => {

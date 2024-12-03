@@ -1,0 +1,39 @@
+.kyc-waiting-page {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    padding: 20px;
+    background-color: #f9f9f9;
+  }
+  
+  .kyc-title {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  
+  .kyc-message {
+    font-size: 1.2rem;
+    margin: 20px 0;
+  }
+  
+  .notification-section {
+    margin-top: 20px;
+  }
+  
+  .waiting-notification {
+    font-style: italic;
+    color: #777;
+  }
+  
+  .kyc-message p {
+    margin-bottom: 15px;
+  }
+  
+  .kyc-message strong {
+    color: #4CAF50; /* Green color for KYC completion message */
+  }
+  
+  .kyc-waiting-page p {
+    color: #555;
+  }
+  

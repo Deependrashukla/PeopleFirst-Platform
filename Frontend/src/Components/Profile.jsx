@@ -2,12 +2,16 @@ import React, { useState, useRef, useEffect } from 'react';
 import './Navbar.css'; // Ensure you have a relevant CSS file
 import { auth } from '../firebase-config';
 import { signOut } from 'firebase/auth';
+import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
   const [userDetails, setUserDetails] = useState({ name: '', email: '' });
   const [authToken, setAuthToken] = useState('');
   const [showDetails, setShowDetails] = useState(false);
   const profileRef = useRef(null);
+  
+
+  const navigate = useNavigate();
 
 
   //////////////////
@@ -39,7 +43,7 @@ const Profile = () => {
 
       }
   }
-  ////////////////////////////////////////////////////// Kirtan
+  //////////////////////////////////////////////////////
 
 
 
@@ -100,7 +104,7 @@ const Profile = () => {
           <hr />
           <ul className="profile-actions">
             <li>
-              <button onClick={() => console.log('View Profile')}>View Profile</button>
+              <button onClick={() => navigate("/worker_dashboard")}>View Profile</button>
             </li>
             <li>
               <button onClick={() => console.log('Settings')}>Settings</button>

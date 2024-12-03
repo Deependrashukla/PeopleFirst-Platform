@@ -21,6 +21,7 @@ import WorkerDashboard from './Components/worker_dashboard';
 import UserDashboard from './Components/user_dashboard';
 import RazorpayPayment from './Components/razor';
 import DummyPaymentPage from './Components/DummyPaymentPage';
+import KycWaitingPage from './Components/KycWaitingPage';
 
 
 function App() {
@@ -46,6 +47,7 @@ function App() {
         <Route path="/worker_dashboard" element={<WorkerDashboard />} />
         <Route path="/user_dashboard" element={<UserDashboard></UserDashboard>} />
         <Route path="/payment" element={<RazorpayPayment />} />
+        <Route path="/kycWaitingPage" element={<KycWaitingPage />} />
 
       </Routes>
       {location.pathname === '/' && <Footer />}

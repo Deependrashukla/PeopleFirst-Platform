@@ -93,10 +93,10 @@ const EventList = () => {
       <div className="card-container">
         {events.map((event, index) => (
           <div key={index} className="event-card">
-            <img src={event.imageUrl} alt={event.title} className="event-image" />
+            {/* <img src={event.imageUrl} alt={event.title} className="event-image" /> */}
             <h2>{event.title}</h2>
             <p>
-              <strong>Category:</strong> {event.category}
+              <strong>Category:</strong> {event.title}
             </p>
             <p>
               <strong>Place:</strong> {event.city}
