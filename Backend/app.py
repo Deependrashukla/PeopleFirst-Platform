@@ -546,6 +546,7 @@ def update_appointment_status():
 #     # print("Received data:", aadhaar_number)
 #     # Query your aadhaar_numberbase or perform operations
 #     return jsonify({'aadhaar_number': aadhaar_number})
+from sqlalchemy import desc
 @app.route('/get_appointment_status', methods=['POST'])
 def get_appointment_status():
     try:
@@ -553,15 +554,20 @@ def get_appointment_status():
         print(data, 'so')
         user_email = data.get('user_email')
         worker_aadhar = data.get('worker_aadhar')
+        # service = data.get('service')
+        print(user_email, worker_aadhar)
+        # print(service)
 
         if not user_email or not worker_aadhar:
             return jsonify({"success": False, "message": "Missing parameters"}), 400
 
         # Query the database for the appointment
-        appointment = Appoint.query.filter_by(user_email=user_email, worker_aadhar=worker_aadhar).first()
+        appointment = Appoint.query.filter_by(user_email=user_email, worker_aadhar = worker_aadhar).first()
         print(appointment,'sonalgupta')
+        print(appointment)
 
-        if appointment:
+        if appointment.status == "accepted":
+            print('sssssssss')
             return jsonify({
                 "success": True,
                 "status": appointment.status

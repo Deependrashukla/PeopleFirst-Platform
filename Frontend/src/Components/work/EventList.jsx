@@ -74,7 +74,7 @@ const EventList = () => {
 
   return (
     <div className="event-list">
-      <h1>Event Listings</h1>
+      <h1> Events </h1>
       <div className="filters">
         <input
           type="text"

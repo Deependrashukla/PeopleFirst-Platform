@@ -87,7 +87,7 @@ const EventDetails = () => {
         },
         body: JSON.stringify({
           user_email: userEmail,
-          worker_aadhar: event.aadhaar_number,
+          worker_aadhar: event.aadhaar_number
         }),
       })
         .then((response) => response.json())
