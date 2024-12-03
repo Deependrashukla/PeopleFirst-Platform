@@ -130,7 +130,7 @@ const WorkerDashboard = () => {
                   <div><strong>Service Type:</strong> {appointment.service_type}</div>
                   {/* <div><strong>User Email:</strong> {appointment.user_email}</div> */}
                   <div><strong>Status:</strong> {appointment.status}</div>
-                  <div><strong>Appointment Time:</strong> {new Date(appointment.appointment_time).toLocaleString()}</div> {/* Format date */}
+                  <div><strong>Appointment Time:</strong> {appointment.appointment_time.slice(0, -3)} </div> {/* Format date */}
                   {appointment.status === 'Not completed' && (
                     <button onClick={() => acceptAppointment(appointment.id)}>
                       Accept
