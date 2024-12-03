@@ -572,10 +572,9 @@ def get_appointment_status():
                 "success": True,
                 "status": appointment.status
             }), 200
-
         return jsonify({
             "success": False,
-            "message": "Appointment not found"
+            "message": "Appointment not accepted"
         }), 404
     except Exception as e:
         return jsonify({"success": False, "message": str(e)}), 500
